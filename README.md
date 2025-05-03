@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # FusionIIIT App
 
 **FusionIIIT** is the official Institute Management Software of the **Indian Institute of Information Technology (IIIT)**. This mobile application acts as a companion to the FusionIIIT web platform, delivering key institute services directly to the fingertips of students, faculty, and staff.
