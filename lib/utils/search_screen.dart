@@ -1,19 +1,11 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/services.dart';
-import 'dart:async'; // Import for Timer
-import '../screens/Examination/announcement_screen.dart';
-import '../screens/Examination/submit_grades.dart';
-import '../screens/Examination/verify_grades.dart';
-import '../screens/Examination/update_grades.dart';
-import '../screens/Examination/generate_transcript.dart';
-import '../screens/Examination/result.dart';
-import '../screens/Examination/validate_grades.dart';
-import 'profile.dart';
-import '../screens/Examination/examination_dashboard.dart';
-import 'bottom_bar.dart'; // Import the bottom bar
-import 'sidebar.dart'; // Import the sidebar
-import 'gesture_sidebar.dart'; // Import the gesture sidebar
+import 'dart:async'; 
+import 'bottom_bar.dart'; 
+import 'sidebar.dart'; 
+import 'gesture_sidebar.dart'; 
 
 class SearchScreen extends StatefulWidget {
   final bool autoFocusSearch;
@@ -27,23 +19,48 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   List<ModuleItem> _searchResults = [];
-  final List<ModuleItem> _allModules = [];
+  final List<ModuleItem> _allModules = [ModuleItem(
+    name: 'Student Affairs',
+    icon: Icons.school,
+    color: Colors.green.shade700,
+    route: (context) => const SearchScreen(), // Placeholder
+  ),
+  // Health & Wellness module
+  ModuleItem(
+    name: 'Health & Wellness',
+    icon: Icons.local_hospital,
+    color: Colors.pink.shade700,
+    route: (context) => const SearchScreen(), // Placeholder
+  ),
+  // Sports & Recreation module
+  ModuleItem(
+    name: 'Sports & Recreation',
+    icon: Icons.sports_soccer,
+    color: Colors.orange.shade700,
+    route: (context) => const SearchScreen(), // Placeholder
+  ),
+  // Alumni Engagement module
+  ModuleItem(
+    name: 'Alumni Engagement',
+    icon: Icons.group_add,
+    color: Colors.teal.shade700,
+    route: (context) => const SearchScreen(), // Placeholder
+  ),];
   final List<SubModuleItem> _allSubModules = [];
   final FocusNode _searchFocusNode = FocusNode();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Add scaffold key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); 
   
-  // Enhanced animation controllers
+  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _pulseAnimation;
   
-  // Animation tracking
+  
   bool _isSearchFocused = false;
-  bool _isAnimatingSearch = false;
   
-  // Gradient decoration for cards
+  
   late final Decoration _cardGradient = BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
@@ -63,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     ],
   );
   
-  // Gradient decoration for modal header
+  
   late final Decoration _modalHeaderGradient = BoxDecoration(
     gradient: LinearGradient(
       begin: Alignment.topLeft,
@@ -83,7 +100,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     ],
   );
 
-  Timer? _debounce; // Timer for debounce
+  Timer? _debounce; 
 
   @override
   void initState() {
@@ -92,14 +109,12 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _searchFocusNode.addListener(() {
       setState(() {
         _isSearchFocused = _searchFocusNode.hasFocus;
-        // Trigger animation effects when focus changes
+        
         if (_isSearchFocused) {
           _animationController.forward();
-          _isAnimatingSearch = true;
-          Future.delayed(const Duration(milliseconds: 500), () { // Increased from 300 to 500
+          Future.delayed(const Duration(milliseconds: 500), () { 
             if (mounted) {
               setState(() {
-                _isAnimatingSearch = false;
               });
             }
           });
@@ -107,13 +122,13 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       });
     });
     
-    // Initialize animations with longer durations
+    
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800), // Increased from 500 to 800
+      duration: const Duration(milliseconds: 800), 
     );
     
-    // Create multiple animations with custom curves
+    
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
@@ -121,256 +136,29 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController, 
-        curve: const Interval(0.1, 0.9, curve: Curves.easeOutQuint), // Added interval for longer effect
+        curve: const Interval(0.1, 0.9, curve: Curves.easeOutQuint), 
       ),
     );
     
     _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _animationController, 
-        curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic), // Added interval for longer effect
+        curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic), 
       ),
     );
     
-    _pulseAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.05), weight: 1),
-      TweenSequenceItem(tween: Tween<double>(begin: 1.05, end: 1.0), weight: 1),
-    ]).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.7, curve: Curves.easeInOut), // Changed from 0.5 to 0.7
-    ));
     
-    // Auto-start animation when screen loads with a slight delay for visibility
+    
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
-        _animationController.forward(from: 0.0); // Reset to ensure full animation
+        _animationController.forward(from: 0.0); 
       }
     });
   }
 
   void _initializeModules() {
-    // Main modules
-    _allModules.addAll([
-      // Examination module
-      ModuleItem(
-        name: 'Examination',
-        icon: Icons.school,
-        color: Colors.blue.shade700,
-        route: (context) => const ExaminationDashboard(),
-      ),
-      // File Tracking module
-      ModuleItem(
-        name: 'File Tracking',
-        icon: Icons.file_copy,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Purchase module
-      ModuleItem(
-        name: 'Purchase',
-        icon: Icons.shopping_cart,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Programme & Curriculum module
-      ModuleItem(
-        name: 'Programme & Curriculum',
-        icon: Icons.menu_book,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Patent module
-      ModuleItem(
-        name: 'Patent',
-        icon: Icons.brightness_7,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Inventory module
-      ModuleItem(
-        name: 'Inventory',
-        icon: Icons.inventory_2,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Event Management module
-      ModuleItem(
-        name: 'Event Management',
-        icon: Icons.event_available,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Research module
-      ModuleItem(
-        name: 'Research',
-        icon: Icons.science,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Finance module
-      ModuleItem(
-        name: 'Finance',
-        icon: Icons.account_balance_wallet,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Placement module
-      ModuleItem(
-        name: 'Placement',
-        icon: Icons.work,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Human Resources module
-      ModuleItem(
-        name: 'Human Resources',
-        icon: Icons.people_alt,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Library Management module
-      ModuleItem(
-        name: 'Library Management',
-        icon: Icons.local_library,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Hostel Management module
-      ModuleItem(
-        name: 'Hostel Management',
-        icon: Icons.apartment,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Alumni Network module
-      ModuleItem(
-        name: 'Alumni Network',
-        icon: Icons.group,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-      ),
-      // Profile
-      ModuleItem(
-        name: 'Profile',
-        icon: Icons.person,
-        color: Colors.blue.shade700,
-        route: (context) => const ProfileScreen(),
-      ),
-    ]);
-
-    // Sub modules
-    _allSubModules.addAll([
-      // Examination sub-modules
-      SubModuleItem(
-        name: 'Announcement',
-        icon: Icons.campaign,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(),
-        parentModule: 'Examination',
-        description: 'View announcements and updates',
-      ),
-      SubModuleItem(
-        name: 'Submit Grades',
-        icon: Icons.grade,
-        color: Colors.blue.shade700,
-        route: (context) => const SubmitGradesScreen(),
-        parentModule: 'Examination',
-        description: 'Submit student grades and evaluations',
-      ),
-      SubModuleItem(
-        name: 'Verify Grades',
-        icon: Icons.check_circle,
-        color: Colors.blue.shade700,
-        route: (context) => const VerifyGradesScreen(),
-        parentModule: 'Examination',
-        description: 'Verify and approve submitted grades',
-      ),
-      SubModuleItem(
-        name: 'Generate Transcript',
-        icon: Icons.calendar_today,
-        color: Colors.blue.shade700,
-        route: (context) => const GenerateTranscriptScreen(),
-        parentModule: 'Examination',
-        description: 'Generate student transcripts and reports',
-      ),
-      SubModuleItem(
-        name: 'Validate Grades',
-        icon: Icons.verified_user,
-        color: Colors.blue.shade700,
-        route: (context) => const ValidateGradesScreen(),
-        parentModule: 'Examination',
-        description: 'Validate grades against academic policies',
-      ),
-      SubModuleItem(
-        name: 'Update Grades',
-        icon: Icons.update,
-        color: Colors.blue.shade700,
-        route: (context) => const UpdateGradesScreen(),
-        parentModule: 'Examination',
-        description: 'Update existing grades and evaluations',
-      ),
-      SubModuleItem(
-        name: 'Result',
-        icon: Icons.assessment,
-        color: Colors.blue.shade700,
-        route: (context) => const ResultScreen(),
-        parentModule: 'Examination',
-        description: 'View and analyze examination results',
-      ),
-
-      // File Tracking sub-modules
-      SubModuleItem(
-        name: 'Create File',
-        icon: Icons.create_new_folder,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'File Tracking',
-        description: 'Create new tracking files',
-      ),
-      SubModuleItem(
-        name: 'Track File',
-        icon: Icons.find_in_page,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'File Tracking',
-        description: 'Track existing files in the system',
-      ),
-      SubModuleItem(
-        name: 'File History',
-        icon: Icons.history,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'File Tracking',
-        description: 'View history of file movements',
-      ),
-
-      // Purchase sub-modules
-      SubModuleItem(
-        name: 'Create Order',
-        icon: Icons.add_shopping_cart,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'Purchase',
-        description: 'Create new purchase orders',
-      ),
-      SubModuleItem(
-        name: 'Purchase Requests',
-        icon: Icons.receipt_long,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'Purchase',
-        description: 'View and manage purchase requests',
-      ),
-      SubModuleItem(
-        name: 'Manage Vendors',
-        icon: Icons.inventory,
-        color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
-        parentModule: 'Purchase',
-        description: 'Manage vendor information and contracts',
-      ),
-
-      // Add submodules for other main modules as needed
+    
+    _allModules.addAll([ 
     ]);
   }
 
@@ -382,41 +170,26 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       return;
     }
 
-    // First search for exact module matches
+    
     List<ModuleItem> moduleMatches = _allModules
         .where(
             (module) => module.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    // Then search for submodule matches (excluding descriptions)
+    
     List<SubModuleItem> subModuleMatches = _allSubModules
         .where((subModule) =>
             subModule.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    // Create a set of parent module names from matching submodules
+    
     Set<String> parentModuleNames = {};
     for (var subModule in subModuleMatches) {
       parentModuleNames.add(subModule.parentModule);
     }
 
-    // Add parent modules that aren't already in moduleMatches
-    for (var parentName in parentModuleNames) {
-      bool alreadyIncluded =
-          moduleMatches.any((module) => module.name == parentName);
-      if (!alreadyIncluded) {
-        var parentModule = _allModules.firstWhere(
-          (module) => module.name == parentName,
-          orElse: () => ModuleItem(
-            name: parentName,
-            icon: Icons.folder,
-            color: Colors.blue.shade700,
-            route: (context) => const AnnouncementScreen(),
-          ),
-        );
-        moduleMatches.add(parentModule);
-      }
-    }
+    
+    
 
     setState(() {
       _searchResults = moduleMatches;
@@ -426,7 +199,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
-      _performSearch(query); // Perform search after debounce delay
+      _performSearch(query); 
     });
   }
 
@@ -449,7 +222,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     _searchController.dispose();
     _searchFocusNode.dispose();
     _animationController.dispose();
-    _debounce?.cancel(); // Cancel debounce timer
+    _debounce?.cancel(); 
     super.dispose();
   }
 
@@ -457,9 +230,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return GestureSidebar(
       scaffoldKey: _scaffoldKey,
-      edgeWidthFactor: 1.0, // Allow swipe from anywhere on screen
+      edgeWidthFactor: 1.0, 
       child: Scaffold(
-        key: _scaffoldKey, // Use the scaffold key
+        key: _scaffoldKey, 
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: const Text(
@@ -474,7 +247,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
           backgroundColor: Colors.blue.shade700.withOpacity(0.95),
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
-          centerTitle: false, // Changed from true to false to align title to the left
+          centerTitle: false, 
           systemOverlayStyle: SystemUiOverlayStyle.light,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -482,10 +255,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             ),
           ),
         ),
-        drawer: const Sidebar(), // Add Sidebar as a drawer
+        drawer: const Sidebar(), 
         body: Stack(
           children: [
-            // Clean white background
+            
             Container(
               color: Colors.white,
             ),
@@ -527,7 +300,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
 
   Widget _buildSearchHeader() {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 500), // Increased from 300 to 500
+      duration: const Duration(milliseconds: 500), 
       curve: Curves.easeOutQuint,
       decoration: BoxDecoration(
         color: Colors.blue.shade700,
@@ -547,7 +320,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 500), // Increased from 300 to 500
+            duration: const Duration(milliseconds: 500), 
             curve: Curves.easeOutQuint,
             height: 50,
             decoration: BoxDecoration(
@@ -565,11 +338,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocusNode,
-              onChanged: _onSearchChanged, // Use debounce handler
+              onChanged: _onSearchChanged, 
               autofocus: widget.autoFocusSearch,
               style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.left, // Explicitly set left alignment
-              textAlignVertical: TextAlignVertical.center, // Center vertically
+              textAlign: TextAlign.left, 
+              textAlignVertical: TextAlignVertical.center, 
               decoration: InputDecoration(
                 hintText: 'Search modules or features...',
                 hintStyle: TextStyle(
@@ -577,7 +350,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   fontSize: 16,
                 ),
                 prefixIcon: AnimatedContainer(
-                  duration: const Duration(milliseconds: 500), // Increased from 300 to 500
+                  duration: const Duration(milliseconds: 500), 
                   padding: EdgeInsets.all(_isSearchFocused ? 0 : 2),
                   child: Icon(
                     Icons.search,
@@ -611,7 +384,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     )
                   : null,
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.only(left: 0, top: 15, right: 20, bottom: 15), // Left padding removed, handled by prefixIcon
+                contentPadding: const EdgeInsets.only(left: 0, top: 15, right: 20, bottom: 15), 
                 alignLabelWithHint: true,
                 isCollapsed: false,
                 isDense: true,
@@ -643,10 +416,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Elastic animation for empty state message - increased duration
+                
                 TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.8, end: 1.0),
-                  duration: const Duration(milliseconds: 1200), // Increased from 800 to 1200
+                  duration: const Duration(milliseconds: 1200), 
                   curve: Curves.elasticOut,
                   builder: (context, value, child) {
                     return Transform.scale(
@@ -723,10 +496,10 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
           child: ListView.builder(
             key: const ValueKey<String>('modules_list'),
             padding: const EdgeInsets.only(top: 20, bottom: 20),
-            itemCount: _allModules.length + 1, // +1 for the header
+            itemCount: _allModules.length + 1, 
             itemBuilder: (context, index) {
               if (index == 0) {
-                // Enhanced header with total module count
+                
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Row(
@@ -768,16 +541,16 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 );
               }
               
-              final moduleIndex = index - 1; // Adjust for header
+              final moduleIndex = index - 1; 
               final module = _allModules[moduleIndex];
               
-              // Staggered entrance for items with longer delays
+              
               return AnimatedBuilder(
                 animation: _animationController,
                 builder: (context, child) {
-                  // Safe interval calculations to prevent overflow - adjusted for longer animation
-                  final double startInterval = 0.1 + (moduleIndex * 0.03 > 0.6 ? 0.6 : moduleIndex * 0.03); // Reduced from 0.05 to 0.03
-                  final double endInterval = 0.7 + (moduleIndex * 0.03 > 0.3 ? 0.3 : moduleIndex * 0.03);  // Reduced from 0.05 to 0.03
+                  
+                  final double startInterval = 0.1 + (moduleIndex * 0.03 > 0.6 ? 0.6 : moduleIndex * 0.03); 
+                  final double endInterval = 0.7 + (moduleIndex * 0.03 > 0.3 ? 0.3 : moduleIndex * 0.03);  
                   
                   final itemAnimation = CurvedAnimation(
                     parent: _animationController,
@@ -822,11 +595,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             itemBuilder: (context, index) {
               final module = _searchResults[index];
               
-              // Staggered entrance for search results
+              
               return AnimatedBuilder(
                 animation: _animationController,
                 builder: (context, child) {
-                  // Safe interval calculations to prevent overflow
+                  
                   final double startInterval = 0.1 + (index * 0.08 > 0.6 ? 0.6 : index * 0.08);
                   final double endInterval = 0.6 + (index * 0.08 > 0.4 ? 0.4 : index * 0.08);
                   
@@ -875,7 +648,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               if (subModules.isNotEmpty) {
                 _showModuleDetails(context, module);
               } else {
-                // Add page transition animation
+                
                 Navigator.of(context).push(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) => 
@@ -909,7 +682,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  // White icon container for contrast against blue background
+                  
                   Hero(
                     tag: 'module_icon_${module.name}',
                     child: Container(
@@ -955,7 +728,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // White arrow button for contrast
+                  
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
@@ -979,7 +752,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
   }
 
   Widget _buildSearchResultItem(BuildContext context, ModuleItem module) {
-    // Find matching subsections if any
+    
     final String query = _searchController.text.toLowerCase();
     final List<SubModuleItem> matchingSubModules =
         _getMatchingSubModules(query, module.name);
@@ -1115,11 +888,11 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                   ],
                 ),
               ),
-              // Reduced spacing between header and list items
+              
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero, // Remove padding around ListView
+                padding: EdgeInsets.zero, 
                 itemCount: matchingSubModules.length > 3 ? 3 : matchingSubModules.length,
                 separatorBuilder: (context, index) => Container(
                   height: 1,
@@ -1132,12 +905,12 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
               ),
               if (matchingSubModules.length > 3)
                 Padding(
-                  // Reduced top padding here
+                  
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                   child: OutlinedButton.icon(
                     onPressed: () {
                       _showModuleDetails(context, module);
-                      // Add haptic feedback
+                      
                       HapticFeedback.lightImpact();
                     },
                     icon: const Icon(Icons.expand_more, color: Colors.white),
@@ -1154,7 +927,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      // Reduced vertical padding on button
+                      
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),
@@ -1166,7 +939,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
     );
   }
 
-  // New method for search results with white text on blue background
+  
   Widget _buildSubModuleItemForSearch(BuildContext context, SubModuleItem subModule, [bool isInSearchResult = false]) {
     final String query = _searchController.text.toLowerCase();
     final bool isMatching = query.isNotEmpty && 
@@ -1180,16 +953,16 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
             context,
             MaterialPageRoute(builder: subModule.route),
           );
-          // Add haptic feedback
+          
           HapticFeedback.lightImpact();
         },
         splashColor: Colors.white.withOpacity(0.1),
         highlightColor: Colors.white.withOpacity(0.05),
         child: Padding(
-          // Reduced vertical padding
+          
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: ListTile(
-            // More compact padding
+            
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             leading: Container(
               width: 40,
@@ -1237,9 +1010,9 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                         color: Colors.white.withOpacity(0.4),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.search,
                           size: 12,
@@ -1276,7 +1049,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                     context,
                     MaterialPageRoute(builder: subModule.route),
                   );
-                  // Add haptic feedback
+                  
                   HapticFeedback.lightImpact();
                 },
               ),
@@ -1295,7 +1068,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      // Remove the problematic animation controller
+      
       builder: (BuildContext context) {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -1312,12 +1085,12 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                 ),
                 child: Column(
                   children: [
-                    // Gradient header section
+                    
                     Container(
                       decoration: _modalHeaderGradient,
                       child: Column(
                         children: [
-                          // Animated handle indicator
+                          
                           Container(
                             margin: const EdgeInsets.only(top: 12),
                             width: 40,
@@ -1408,7 +1181,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                       ),
                     ),
                     
-                    // Content section with sub-modules
+                    
                     if (subModules.isEmpty)
                       Expanded(
                         child: Center(
@@ -1478,7 +1251,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                         ),
                       ),
                     
-                    // Bottom button section
+                    
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: SafeArea(
@@ -1491,7 +1264,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
                                 context,
                                 MaterialPageRoute(builder: module.route),
                               );
-                              // Add haptic feedback
+                              
                               HapticFeedback.mediumImpact();
                             },
                             style: ElevatedButton.styleFrom(

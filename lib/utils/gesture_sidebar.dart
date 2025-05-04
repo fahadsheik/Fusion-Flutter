@@ -17,24 +17,22 @@ class GestureSidebar extends StatelessWidget {
     this.enableGesture = true,
     this.leftEdgeEnabled = true,
     this.rightEdgeEnabled = false,
-    this.edgeWidthFactor = 1.0, // Set to 1.0 to allow gestures from anywhere on screen width
+    this.edgeWidthFactor = 1.0, 
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // If gestures are disabled, just return the child
     if (!enableGesture) {
       return child;
     }
     
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
-        // Open drawer with any right swipe motion
         if (details.delta.dx > sensitivity) {
           scaffoldKey.currentState?.openDrawer();
         }
       },
-      behavior: HitTestBehavior.translucent, // Makes gesture detection more reliable
+      behavior: HitTestBehavior.translucent, 
       child: child,
     );
   }

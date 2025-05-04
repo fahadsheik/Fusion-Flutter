@@ -1,10 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:async'; // Added import for Timer class
+import 'dart:async';
 import 'sidebar.dart';
 import 'gesture_sidebar.dart';
 import 'bottom_bar.dart';
-import '../screens/Examination/examination_dashboard.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,34 +15,25 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin {  // Changed from SingleTickerProviderStateMixin to TickerProviderStateMixin
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController _tabController;
   bool _isSearchVisible = false;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
-  final List<String> _searchHistory = []; // Search history list
-  final int _maxSearchHistory = 10; // Changed from 5 to 10 entries
-  bool _isSearchFocused = false;
-  bool _showSearchHistory = false; // Added missing declaration
-  String _searchQuery = ''; // Store the search query for highlighting
-  bool _isSearching = false; // Flag to track active searching state
-  bool _showFilters = false; // Flag to track if filters are shown
-  
-  // Animation controllers
+  final List<String> _searchHistory = [];
+  final int _maxSearchHistory = 10;
+  String _searchQuery = '';
+
   late AnimationController _searchAnimationController;
   late Animation<double> _searchAnimation;
 
-  // Focus node for better control over the search field focus
   final FocusNode _searchFocusNode = FocusNode();
 
-  // Filter variables
   String? _selectedModule;
   String? _selectedDateFilter;
-  String? _selectedReadFilter; // Added read filter state
+  String? _selectedReadFilter;
 
-  // Date filter options
   final List<String> _dateFilterOptions = [
     'All',
     'Today',
@@ -50,14 +43,12 @@ class _HomeScreenState extends State<HomeScreen>
     'This Year',
   ];
 
-  // Read status filter options
   final List<String> _readFilterOptions = [
     'All',
     'Read',
     'Unread',
   ];
 
-  // Example announcement data across various modules
   final List<Map<String, dynamic>> _announcements = [
     {
       'title': 'End Semester Examination Schedule',
@@ -182,7 +173,6 @@ class _HomeScreenState extends State<HomeScreen>
     },
   ];
 
-  // Example system notifications data (replacing the previous notifications)
   final List<Map<String, dynamic>> _notifications = [
     {
       'title': 'System Maintenance Scheduled',
@@ -262,17 +252,15 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _selectedDateFilter = 'All'; // Default date filter
-    _selectedReadFilter = 'All'; // Default read filter
-
+    _selectedDateFilter = 'All';
+    _selectedReadFilter = 'All';
     _searchController.addListener(_onSearchChanged);
-    
-    // Initialize search animation controller
+
     _searchAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _searchAnimation = CurvedAnimation(
       parent: _searchAnimationController,
       curve: Curves.easeInOut,
@@ -312,30 +300,26 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  // Add search to history - improved implementation for 5 most recent searches
   void _addToSearchHistory(String query) {
     if (query.isEmpty) return;
 
     setState(() {
-      // Remove the query if it already exists (to move it to the top)
       _searchHistory.remove(query);
-
-      // Add to the beginning of the list
       _searchHistory.insert(0, query);
-
-      // Limit history to exactly 5 items
       if (_searchHistory.length > _maxSearchHistory) {
         _searchHistory.removeLast();
       }
     });
   }
 
-  // Helper method to highlight search terms in text
   Widget _highlightSearchText(String text,
-      {int maxLines = 1, bool isBold = false, double fontSize = 14.0, bool isRead = false}) {
-    // Text color is grey if card is read, otherwise dark grey/black
-    final Color textColor = isRead ? Colors.grey.shade600 : Colors.grey.shade900;
-    
+      {int maxLines = 1,
+      bool isBold = false,
+      double fontSize = 14.0,
+      bool isRead = false}) {
+    final Color textColor =
+        isRead ? Colors.grey.shade600 : Colors.grey.shade900;
+
     if (_searchQuery.isEmpty) {
       return Text(
         text,
@@ -350,10 +334,7 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    // Create regex pattern from search query with case insensitivity
     final pattern = RegExp(_searchQuery, caseSensitive: false);
-
-    // Find all matches
     final matches = pattern.allMatches(text);
 
     if (matches.isEmpty) {
@@ -370,12 +351,10 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
 
-    // Create TextSpans with highlighted parts
     final List<TextSpan> children = [];
     int lastMatchEnd = 0;
 
     for (final match in matches) {
-      // Add text before match
       if (match.start > lastMatchEnd) {
         children.add(TextSpan(
           text: text.substring(lastMatchEnd, match.start),
@@ -387,7 +366,6 @@ class _HomeScreenState extends State<HomeScreen>
         ));
       }
 
-      // Add highlighted match
       children.add(TextSpan(
         text: text.substring(match.start, match.end),
         style: TextStyle(
@@ -401,7 +379,6 @@ class _HomeScreenState extends State<HomeScreen>
       lastMatchEnd = match.end;
     }
 
-    // Add remaining text after last match
     if (lastMatchEnd < text.length) {
       children.add(TextSpan(
         text: text.substring(lastMatchEnd),
@@ -420,7 +397,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // Get all unique modules for filter
   List<String> _getUniqueModules() {
     final Set<String> modules = {};
 
@@ -439,14 +415,13 @@ class _HomeScreenState extends State<HomeScreen>
     }
 
     final List<String> modulesList = modules.toList();
-    modulesList.sort(); // Sort alphabetically
-    return ['All'] + modulesList; // Add 'All' as the first option
+    modulesList.sort();
+    return ['All'] + modulesList;
   }
 
   List<Map<String, dynamic>> _getFilteredAnnouncements() {
     List<Map<String, dynamic>> filtered = _announcements;
 
-    // Apply text search filter if search is active
     if (_searchController.text.isNotEmpty) {
       filtered = filtered
           .where((announcement) =>
@@ -465,14 +440,12 @@ class _HomeScreenState extends State<HomeScreen>
           .toList();
     }
 
-    // Apply module filter
     if (_selectedModule != null && _selectedModule != 'All') {
       filtered = filtered
           .where((announcement) => announcement['module'] == _selectedModule)
           .toList();
     }
 
-    // Apply date filter
     if (_selectedDateFilter != null && _selectedDateFilter != 'All') {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
@@ -504,7 +477,6 @@ class _HomeScreenState extends State<HomeScreen>
       }).toList();
     }
 
-    // Apply read/unread filter
     if (_selectedReadFilter != null && _selectedReadFilter != 'All') {
       filtered = filtered.where((announcement) {
         final isUnread = announcement['isUnread'] as bool? ?? false;
@@ -520,7 +492,6 @@ class _HomeScreenState extends State<HomeScreen>
       }).toList();
     }
 
-    // Sort by date in descending order
     filtered.sort((a, b) {
       final dateA = a['date'] as DateTime;
       final dateB = b['date'] as DateTime;
@@ -533,7 +504,6 @@ class _HomeScreenState extends State<HomeScreen>
   List<Map<String, dynamic>> _getFilteredNotifications() {
     List<Map<String, dynamic>> filtered = _notifications;
 
-    // Apply text search filter if search is active
     if (_searchController.text.isNotEmpty) {
       filtered = filtered
           .where((notification) =>
@@ -552,14 +522,12 @@ class _HomeScreenState extends State<HomeScreen>
           .toList();
     }
 
-    // Apply module filter
     if (_selectedModule != null && _selectedModule != 'All') {
       filtered = filtered
           .where((notification) => notification['module'] == _selectedModule)
           .toList();
     }
 
-    // Apply date filter
     if (_selectedDateFilter != null && _selectedDateFilter != 'All') {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
@@ -591,7 +559,6 @@ class _HomeScreenState extends State<HomeScreen>
       }).toList();
     }
 
-    // Apply read/unread filter
     if (_selectedReadFilter != null && _selectedReadFilter != 'All') {
       filtered = filtered.where((notification) {
         final isUnread = notification['isUnread'] as bool? ?? false;
@@ -607,7 +574,6 @@ class _HomeScreenState extends State<HomeScreen>
       }).toList();
     }
 
-    // Sort by date in descending order
     filtered.sort((a, b) {
       final dateA = a['date'] as DateTime;
       final dateB = b['date'] as DateTime;
@@ -632,7 +598,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  // Show notification details in a bottom sheet
   void _showNotificationDetails(Map<String, dynamic> notification) {
     final isSystemNotification = notification['type'] == 'system';
 
@@ -640,8 +605,8 @@ class _HomeScreenState extends State<HomeScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      isDismissible: true, // Allow dismissing by tapping outside
-      enableDrag: true, // Allow dragging to dismiss
+      isDismissible: true,
+      enableDrag: true,
       transitionAnimationController: AnimationController(
         vsync: Navigator.of(context),
         duration: const Duration(milliseconds: 400),
@@ -649,7 +614,6 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (context) {
         return Stack(
           children: [
-            // Transparent overlay for detecting taps outside
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).pop(),
@@ -659,7 +623,6 @@ class _HomeScreenState extends State<HomeScreen>
                 width: double.infinity,
               ),
             ),
-            // The actual bottom sheet content
             DraggableScrollableSheet(
               initialChildSize: 0.6,
               minChildSize: 0.3,
@@ -685,7 +648,6 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Handle bar
                       Center(
                         child: Container(
                           margin: const EdgeInsets.only(top: 12),
@@ -697,8 +659,6 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
-                      // Header with module/system badge
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
                         child: Row(
@@ -722,7 +682,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 children: [
                                   Icon(
                                     isSystemNotification
-                                        ? Icons.system_update
+                                        ? HugeIcons.strokeRoundedSystemUpdate01
                                         : _getModuleTypeIcon(
                                             notification['module'] ?? ''),
                                     size: 16,
@@ -756,8 +716,6 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                       ),
-
-                      // Title with hero animation for smooth transition
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                         child: Hero(
@@ -775,10 +733,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
                       const Divider(),
-
-                      // Content - scrollable
                       Expanded(
                         child: SingleChildScrollView(
                           controller: scrollController,
@@ -810,11 +765,10 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // Show announcement details in a bottom sheet
   void _showAnnouncementDetails(Map<String, dynamic> announcement) {
     final hasAttachment = announcement['hasAttachment'] as bool? ?? false;
     final attachmentName = announcement['attachmentName'] as String? ?? '';
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -828,7 +782,6 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (context) {
         return Stack(
           children: [
-            // Transparent overlay for detecting taps outside
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => Navigator.of(context).pop(),
@@ -838,7 +791,6 @@ class _HomeScreenState extends State<HomeScreen>
                 width: double.infinity,
               ),
             ),
-            // The actual bottom sheet content
             DraggableScrollableSheet(
               initialChildSize: 0.6,
               minChildSize: 0.3,
@@ -864,7 +816,6 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Handle bar
                       Center(
                         child: Container(
                           margin: const EdgeInsets.only(top: 12),
@@ -876,8 +827,6 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
-                      // Header with module badge
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
                         child: Row(
@@ -921,8 +870,6 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                       ),
-
-                      // Title with hero animation
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                         child: Hero(
@@ -940,10 +887,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
                       const Divider(),
-
-                      // Content - scrollable
                       Expanded(
                         child: SingleChildScrollView(
                           controller: scrollController,
@@ -959,8 +903,6 @@ class _HomeScreenState extends State<HomeScreen>
                                   height: 1.5,
                                 ),
                               ),
-
-                              // Attachment section with subtle animation
                               if (hasAttachment) ...[
                                 const SizedBox(height: 24),
                                 TweenAnimationBuilder(
@@ -970,7 +912,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     return Opacity(
                                       opacity: value,
                                       child: Transform(
-                                        transform: Matrix4.translationValues(0, 20 * (1 - value), 0),
+                                        transform: Matrix4.translationValues(
+                                            0, 20 * (1 - value), 0),
                                         child: child,
                                       ),
                                     );
@@ -980,8 +923,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     decoration: BoxDecoration(
                                       color: Colors.blue.shade50,
                                       borderRadius: BorderRadius.circular(12),
-                                      border:
-                                          Border.all(color: Colors.blue.shade100),
+                                      border: Border.all(
+                                          color: Colors.blue.shade100),
                                     ),
                                     child: Row(
                                       children: [
@@ -1016,29 +959,36 @@ class _HomeScreenState extends State<HomeScreen>
                                         ),
                                         IconButton(
                                           icon: Icon(
-                                            Icons.download,
+                                            HugeIcons.strokeRoundedDownload02,
                                             color: Colors.blue.shade700,
                                           ),
                                           onPressed: () {
-                                            // Download logic with animation feedback
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               SnackBar(
                                                 content: Row(
                                                   children: [
                                                     const SizedBox(
                                                       width: 20,
                                                       height: 20,
-                                                      child: CircularProgressIndicator(
+                                                      child:
+                                                          CircularProgressIndicator(
                                                         strokeWidth: 2,
-                                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                    Color>(
+                                                                Colors.white),
                                                       ),
                                                     ),
                                                     const SizedBox(width: 16),
-                                                    Text('Downloading $attachmentName...'),
+                                                    Text(
+                                                        'Downloading $attachmentName...'),
                                                   ],
                                                 ),
-                                                duration: const Duration(seconds: 2),
-                                                behavior: SnackBarBehavior.floating,
+                                                duration:
+                                                    const Duration(seconds: 2),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
                                               ),
                                             );
                                           },
@@ -1048,7 +998,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 24), // Add bottom padding
+                              const SizedBox(height: 24),
                             ],
                           ),
                         ),
@@ -1097,10 +1047,10 @@ class _HomeScreenState extends State<HomeScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       children: [
-                        Icon(Icons.filter_list, color: Colors.blue.shade800),
+                        Icon(HugeIcons.strokeRoundedFilterEdit,
+                            color: Colors.blue.shade800),
                         const SizedBox(width: 10),
                         const Text(
                           'Filters',
@@ -1118,7 +1068,7 @@ class _HomeScreenState extends State<HomeScreen>
                               _selectedReadFilter = 'All';
                             });
                           },
-                          icon: Icon(Icons.refresh,
+                          icon: Icon(HugeIcons.strokeRoundedRefresh,
                               size: 18, color: Colors.red.shade600),
                           label: Text(
                             'Reset Filters',
@@ -1131,14 +1081,12 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                     const Divider(),
-
-                    // Status Filter
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Row(
                         children: [
                           Icon(
-                            Icons.mark_email_read,
+                            HugeIcons.strokeRoundedMailValidation02,
                             size: 18,
                             color: Colors.grey.shade800,
                           ),
@@ -1166,7 +1114,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 readOption == 'Read'
                                     ? Icons.visibility
                                     : readOption == 'Unread'
-                                        ? Icons.visibility_off
+                                        ? HugeIcons.strokeRoundedViewOffSlash
                                         : Icons.remove_red_eye,
                                 size: 16,
                                 color: _selectedReadFilter == readOption
@@ -1197,14 +1145,12 @@ class _HomeScreenState extends State<HomeScreen>
                         );
                       }).toList(),
                     ),
-
-                    // Module Filter
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Row(
                         children: [
                           Icon(
-                            Icons.category_outlined,
+                            HugeIcons.strokeRoundedViewOffSlash,
                             size: 18,
                             color: Colors.grey.shade800,
                           ),
@@ -1245,14 +1191,12 @@ class _HomeScreenState extends State<HomeScreen>
                         );
                       }).toList(),
                     ),
-
-                    // Date Filter
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: Row(
                         children: [
                           Icon(
-                            Icons.date_range,
+                            HugeIcons.strokeRoundedCalendar03,
                             size: 18,
                             color: Colors.grey.shade800,
                           ),
@@ -1294,8 +1238,6 @@ class _HomeScreenState extends State<HomeScreen>
                         );
                       }).toList(),
                     ),
-
-                    // Apply Button with animation
                     const SizedBox(height: 24.0),
                     TweenAnimationBuilder<double>(
                       duration: const Duration(milliseconds: 300),
@@ -1309,10 +1251,6 @@ class _HomeScreenState extends State<HomeScreen>
                             child: ElevatedButton(
                               onPressed: () {
                                 setState(() {
-                                  // Set _showFilters to true when filters are applied
-                                  _showFilters = (_selectedModule != 'All' ||
-                                      _selectedDateFilter != 'All' ||
-                                      _selectedReadFilter != 'All');
                                 });
                                 Navigator.pop(context);
                               },
@@ -1349,7 +1287,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Check if any filters are active
     final bool hasActiveFilters =
         (_selectedModule != null && _selectedModule != 'All') ||
             (_selectedDateFilter != null && _selectedDateFilter != 'All') ||
@@ -1359,7 +1296,6 @@ class _HomeScreenState extends State<HomeScreen>
       scaffoldKey: _scaffoldKey,
       child: Scaffold(
         key: _scaffoldKey,
-        // Darkened background color for better contrast with white cards
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
           title: _isSearchVisible
@@ -1381,7 +1317,8 @@ class _HomeScreenState extends State<HomeScreen>
                         hintText: 'Search...',
                         hintStyle:
                             TextStyle(color: Colors.white.withOpacity(0.7)),
-                        prefixIcon: const Icon(Icons.search, color: Colors.white),
+                        prefixIcon: const Icon(HugeIcons.strokeRoundedSearch01,
+                            color: Colors.white),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.close,
@@ -1404,24 +1341,21 @@ class _HomeScreenState extends State<HomeScreen>
                       },
                       onSubmitted: (value) {
                         if (value.isNotEmpty) {
-                          // Add search to history
                           _addToSearchHistory(value);
-                          // Close keyboard and clear focus
+
                           _searchFocusNode.unfocus();
                         }
                       },
                       onTap: () {
-                        // Show search history when search field is tapped
                         setState(() {
-                          _isSearchFocused = true;
                         });
                       },
                     ),
                   ),
                 )
-              : AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: const Text(
+              : const AnimatedSwitcher(
+                  duration:  Duration(milliseconds: 300),
+                  child:  Text(
                     'Home',
                     key: ValueKey('title'),
                     style: TextStyle(
@@ -1434,7 +1368,7 @@ class _HomeScreenState extends State<HomeScreen>
           elevation: 2,
           iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
+            icon: const Icon(HugeIcons.strokeRoundedMenu02, color: Colors.white),
             onPressed: () {
               if (_scaffoldKey.currentState != null) {
                 _scaffoldKey.currentState!.openDrawer();
@@ -1449,17 +1383,16 @@ class _HomeScreenState extends State<HomeScreen>
               },
               child: IconButton(
                 key: ValueKey<bool>(_isSearchVisible),
-                icon: Icon(_isSearchVisible ? Icons.close : Icons.search,
+                icon: Icon(_isSearchVisible ? Icons.close : HugeIcons.strokeRoundedSearch01,
                     color: Colors.white),
                 onPressed: _toggleSearch,
               ),
             ),
-            // Filter icon with visual indicator when filters are active
             Stack(
               clipBehavior: Clip.none,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.filter_list, color: Colors.white),
+                  icon: const Icon(HugeIcons.strokeRoundedFilterEdit, color: Colors.white),
                   onPressed: _showFilterOverlay,
                 ),
                 if (hasActiveFilters)
@@ -1480,8 +1413,8 @@ class _HomeScreenState extends State<HomeScreen>
                               decoration: BoxDecoration(
                                 color: Colors.amber,
                                 shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.blue.shade700, width: 1.5),
+                                border: Border.all(
+                                    color: Colors.blue.shade700, width: 1.5),
                               ),
                             ),
                           ),
@@ -1506,29 +1439,19 @@ class _HomeScreenState extends State<HomeScreen>
         drawer: Sidebar(
           onItemSelected: (index) {
             if (index == 0) {
-              // Already on Home screen
               Navigator.pop(context);
-            } else if (index == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ExaminationDashboard()),
-              );
             }
           },
         ),
         body: Column(
           children: [
-            // Display the horizontal search history banner when there is search history
             AnimatedSize(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               child: _isSearchVisible && _searchHistory.isNotEmpty
-                ? _buildRecentSearchesBanner()
-                : const SizedBox.shrink(),
+                  ? _buildRecentSearchesBanner()
+                  : const SizedBox.shrink(),
             ),
-            
-            // Main tab content
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -1545,257 +1468,8 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildFilterOptions() {
-    return Container(
-      color: Colors.blue.shade50,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Filter title row with improved layout
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                Icon(Icons.filter_list, size: 18, color: Colors.blue.shade800),
-                const SizedBox(width: 8),
-                Text(
-                  'Active Filters',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade800,
-                    fontSize: 15,
-                  ),
-                ),
-                const Spacer(),
-                // Reset filters button with improved appearance
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _selectedModule = 'All';
-                      _selectedDateFilter = 'All';
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      children: [
-                        Icon(Icons.refresh,
-                            size: 14, color: Colors.red.shade600),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Reset',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.red.shade600,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          // Filter chips in horizontal scroll with improved spacing
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                // Module filter with improved appearance
-                if (_selectedModule != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: FilterChip(
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.category_outlined,
-                              size: 14, color: Colors.blue.shade700),
-                          const SizedBox(width: 4),
-                          Text(
-                            _selectedModule == 'All'
-                                ? 'All Modules'
-                                : _selectedModule!,
-                            style: TextStyle(
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Icon(Icons.arrow_drop_down,
-                              size: 14, color: Colors.blue.shade700),
-                        ],
-                      ),
-                      backgroundColor: Colors.white,
-                      checkmarkColor: Colors.transparent,
-                      showCheckmark: false,
-                      selected: _selectedModule != 'All',
-                      selectedColor: Colors.blue.shade50,
-                      onSelected: (_) {
-                        // Show module selection dialog
-                        _showModuleFilterDialog();
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: Colors.blue.shade300),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8),
-                    ),
-                  ),
 
-                // Date filter with improved appearance
-                if (_selectedDateFilter != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: FilterChip(
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.calendar_today,
-                              size: 14, color: Colors.blue.shade700),
-                          const SizedBox(width: 4),
-                          Text(
-                            _selectedDateFilter == 'All'
-                                ? 'All Dates'
-                                : _selectedDateFilter!,
-                            style: TextStyle(
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Icon(Icons.arrow_drop_down,
-                              size: 14, color: Colors.blue.shade700),
-                        ],
-                      ),
-                      backgroundColor: Colors.white,
-                      checkmarkColor: Colors.transparent,
-                      showCheckmark: false,
-                      selected: _selectedDateFilter != 'All',
-                      selectedColor: Colors.blue.shade50,
-                      onSelected: (_) {
-                        // Show date filter dialog
-                        _showDateFilterDialog();
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: Colors.blue.shade300),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Show module filter dialog
-  void _showModuleFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.category_outlined,
-                color: Colors.blue.shade700, size: 20),
-            const SizedBox(width: 8),
-            const Text('Select Module'),
-          ],
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _getUniqueModules().length,
-            itemBuilder: (context, index) {
-              final module = _getUniqueModules()[index];
-              return RadioListTile<String>(
-                title: Text(module),
-                value: module,
-                groupValue: _selectedModule,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedModule = value;
-                  });
-                  Navigator.pop(context);
-                },
-                activeColor: Colors.blue.shade700,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child:
-                Text('Cancel', style: TextStyle(color: Colors.grey.shade700)),
-          ),
-        ],
-        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      ),
-    );
-  }
-
-  // Show date filter dialog
-  void _showDateFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.calendar_today, color: Colors.blue.shade700, size: 20),
-            const SizedBox(width: 8),
-            const Text('Select Date Range'),
-          ],
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _dateFilterOptions.length,
-            itemBuilder: (context, index) {
-              final dateOption = _dateFilterOptions[index];
-              return RadioListTile<String>(
-                title: Text(dateOption),
-                value: dateOption,
-                groupValue: _selectedDateFilter,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedDateFilter = value;
-                  });
-                  Navigator.pop(context);
-                },
-                activeColor: Colors.blue.shade700,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child:
-                Text('Cancel', style: TextStyle(color: Colors.grey.shade700)),
-          ),
-        ],
-        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      ),
-    );
-  }
 
   Widget _buildNotificationsTab() {
     final filteredNotifications = _getFilteredNotifications();
@@ -1813,7 +1487,7 @@ class _HomeScreenState extends State<HomeScreen>
                 return Transform.scale(
                   scale: value,
                   child: Icon(
-                    Icons.notifications_off,
+                    HugeIcons.strokeRoundedNotificationOff02,
                     size: 64,
                     color: Colors.grey.shade400,
                   ),
@@ -1874,12 +1548,12 @@ class _HomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: isUnread 
-                    ? Colors.blue.withOpacity(0.15) // Reduced opacity for subtler shadow
-                    : Colors.grey.shade300.withOpacity(0.3), // Reduced opacity
-                  blurRadius: isUnread ? 6 : 4, // Reduced blur radius
-                  offset: isUnread ? const Offset(0, 2) : const Offset(0, 1), // Smaller offset
-                  spreadRadius: 0, // Removed spread radius for subtler effect
+                  color: isUnread
+                      ? Colors.blue.withOpacity(0.15)
+                      : Colors.grey.shade300.withOpacity(0.3),
+                  blurRadius: isUnread ? 6 : 4,
+                  offset: isUnread ? const Offset(0, 2) : const Offset(0, 1),
+                  spreadRadius: 0,
                 ),
               ],
             ),
@@ -1898,18 +1572,20 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header with module tag and time
                       Row(
                         children: [
-                          // System or Module tag pill with blue color
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: isUnread ? Colors.blue.shade50 : Colors.grey.shade100,
+                              color: isUnread
+                                  ? Colors.blue.shade50
+                                  : Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                  color: isUnread ? Colors.blue.shade100 : Colors.grey.shade300,
+                                  color: isUnread
+                                      ? Colors.blue.shade100
+                                      : Colors.grey.shade300,
                                   width: 0.5),
                             ),
                             child: Row(
@@ -1921,7 +1597,9 @@ class _HomeScreenState extends State<HomeScreen>
                                       : _getModuleTypeIcon(
                                           notification['module']),
                                   size: 12,
-                                  color: isUnread ? Colors.blue.shade700 : Colors.grey.shade600,
+                                  color: isUnread
+                                      ? Colors.blue.shade700
+                                      : Colors.grey.shade600,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -1929,7 +1607,9 @@ class _HomeScreenState extends State<HomeScreen>
                                       ? 'System'
                                       : notification['module'],
                                   style: TextStyle(
-                                    color: isUnread ? Colors.blue.shade700 : Colors.grey.shade600,
+                                    color: isUnread
+                                        ? Colors.blue.shade700
+                                        : Colors.grey.shade600,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1937,13 +1617,13 @@ class _HomeScreenState extends State<HomeScreen>
                               ],
                             ),
                           ),
-
                           const Spacer(),
-                          // Time indicator with black text when unread
                           Text(
                             _formatDate(notification['date']),
                             style: TextStyle(
-                              color: isUnread ? Colors.grey.shade900 : Colors.grey.shade600, // Changed to darker color for unread
+                              color: isUnread
+                                  ? Colors.grey.shade900
+                                  : Colors.grey.shade600,
                               fontSize: 12,
                             ),
                           ),
@@ -1960,10 +1640,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                         ],
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Title with one line and ellipsis - using hero for animation
                       Hero(
                         tag: 'notification_${notification['title']}',
                         child: Material(
@@ -1977,10 +1654,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 10),
-
-                      // Content text
                       RichText(
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -1990,7 +1664,9 @@ class _HomeScreenState extends State<HomeScreen>
                               text: notification['content'],
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isUnread ? Colors.grey.shade900 : Colors.grey.shade700,
+                                color: isUnread
+                                    ? Colors.grey.shade900
+                                    : Colors.grey.shade700,
                                 height: 1.3,
                               ),
                             ),
@@ -2057,7 +1733,7 @@ class _HomeScreenState extends State<HomeScreen>
     return ListView.builder(
       itemCount: filteredAnnouncements.length,
       padding: const EdgeInsets.all(16.0),
-      physics: const BouncingScrollPhysics(), // Keep elastic scroll physics
+      physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         final announcement = filteredAnnouncements[index];
         final isUnread = announcement['isUnread'] as bool;
@@ -2086,12 +1762,12 @@ class _HomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: isUnread 
-                    ? Colors.blue.withOpacity(0.15) // Reduced opacity for subtler shadow
-                    : Colors.grey.shade300.withOpacity(0.3), // Reduced opacity
-                  blurRadius: isUnread ? 6 : 4, // Reduced blur radius
-                  offset: isUnread ? const Offset(0, 2) : const Offset(0, 1), // Smaller offset
-                  spreadRadius: 0, // Removed spread radius for subtler effect
+                  color: isUnread
+                      ? Colors.blue.withOpacity(0.15)
+                      : Colors.grey.shade300.withOpacity(0.3),
+                  blurRadius: isUnread ? 6 : 4,
+                  offset: isUnread ? const Offset(0, 2) : const Offset(0, 1),
+                  spreadRadius: 0,
                 ),
               ],
             ),
@@ -2100,12 +1776,10 @@ class _HomeScreenState extends State<HomeScreen>
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
                 onTap: () {
-                  // Mark as read with animation
                   setState(() {
                     announcement['isUnread'] = false;
                   });
 
-                  // Show announcement details in bottom sheet
                   _showAnnouncementDetails(announcement);
                 },
                 child: Padding(
@@ -2113,18 +1787,20 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Module and time row
                       Row(
                         children: [
-                          // Module tag pill with blue colors to match notification style
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: isUnread ? Colors.blue.shade50 : Colors.grey.shade100,
+                              color: isUnread
+                                  ? Colors.blue.shade50
+                                  : Colors.grey.shade100,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                  color: isUnread ? Colors.blue.shade100 : Colors.grey.shade300,
+                                  color: isUnread
+                                      ? Colors.blue.shade100
+                                      : Colors.grey.shade300,
                                   width: 0.5),
                             ),
                             child: Row(
@@ -2133,13 +1809,17 @@ class _HomeScreenState extends State<HomeScreen>
                                 Icon(
                                   _getModuleTypeIcon(announcement['module']),
                                   size: 12,
-                                  color: isUnread ? Colors.blue.shade700 : Colors.grey.shade600,
+                                  color: isUnread
+                                      ? Colors.blue.shade700
+                                      : Colors.grey.shade600,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   announcement['module'],
                                   style: TextStyle(
-                                    color: isUnread ? Colors.blue.shade700 : Colors.grey.shade600,
+                                    color: isUnread
+                                        ? Colors.blue.shade700
+                                        : Colors.grey.shade600,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -2147,8 +1827,6 @@ class _HomeScreenState extends State<HomeScreen>
                               ],
                             ),
                           ),
-
-                          // Attachment indicator with subtle animation
                           if (hasAttachment)
                             TweenAnimationBuilder<double>(
                               duration: const Duration(milliseconds: 300),
@@ -2159,7 +1837,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   child: Opacity(
                                     opacity: value,
                                     child: Icon(
-                                      Icons.attach_file,
+                                      HugeIcons.strokeRoundedAttachment02,
                                       size: 16,
                                       color: Colors.grey.shade600,
                                     ),
@@ -2167,13 +1845,13 @@ class _HomeScreenState extends State<HomeScreen>
                                 );
                               },
                             ),
-
                           const Spacer(),
-                          // Time indicator with black text when unread
                           Text(
                             _formatDate(announcement['date']),
                             style: TextStyle(
-                              color: isUnread ? Colors.grey.shade900 : Colors.grey.shade600, // Changed to darker color for unread
+                              color: isUnread
+                                  ? Colors.grey.shade900
+                                  : Colors.grey.shade600,
                               fontSize: 12,
                             ),
                           ),
@@ -2190,10 +1868,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                         ],
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Title with one line and ellipsis using hero for animation
                       Hero(
                         tag: 'announcement_${announcement['title']}',
                         child: Material(
@@ -2207,10 +1882,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 10),
-
-                      // Content text
                       RichText(
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -2220,7 +1892,9 @@ class _HomeScreenState extends State<HomeScreen>
                               text: announcement['content'],
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isUnread ? Colors.grey.shade900 : Colors.grey.shade700,
+                                color: isUnread
+                                    ? Colors.grey.shade900
+                                    : Colors.grey.shade700,
                                 height: 1.3,
                               ),
                             ),
@@ -2238,13 +1912,12 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // Helper method to get appropriate icon for file attachments
   IconData _getFileIcon(String fileName) {
     final extension = fileName.split('.').last.toLowerCase();
 
     switch (extension) {
       case 'pdf':
-        return Icons.picture_as_pdf;
+        return HugeIcons.strokeRoundedRefresh;
       case 'doc':
       case 'docx':
         return Icons.description;
@@ -2254,308 +1927,48 @@ class _HomeScreenState extends State<HomeScreen>
       case 'jpg':
       case 'jpeg':
       case 'png':
-        return Icons.image;
+        return HugeIcons.strokeRoundedImage01;
       default:
-        return Icons.insert_drive_file;
+        return HugeIcons.strokeRoundedFile01;
     }
   }
 
   IconData _getModuleTypeIcon(String module) {
     switch (module) {
       case 'Examination':
-        return Icons.school;
+        return HugeIcons.strokeRoundedMortarboard02;
       case 'Library':
-        return Icons.local_library;
+        return HugeIcons.strokeRoundedMortarboard02;
       case 'Hostel':
         return Icons.apartment;
       case 'Placement':
-        return Icons.work;
+        return HugeIcons.strokeRoundedMortarboard02;
       case 'Research':
-        return Icons.science;
+        return HugeIcons.strokeRoundedMortarboard02;
       case 'Academic':
-        return Icons.book;
+        return HugeIcons.strokeRoundedBook01;
       case 'HR':
         return Icons.people;
       case 'Event':
-        return Icons.event;
+        return HugeIcons.strokeRoundedCalendar02;
       case 'Finance':
-        return Icons.account_balance;
+        return HugeIcons.strokeRoundedCalendar02;
       case 'Patent':
         return Icons.brightness_7;
       case 'File Tracking':
-        return Icons.file_copy;
+        return HugeIcons.strokeRoundedFiles02;
       default:
-        return Icons.notifications;
+        return HugeIcons.strokeRoundedNotification03;
     }
   }
 
-  // Add search history display widget
-  Widget _buildSearchHistoryList() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            spreadRadius: 1,
-          ),
-        ],
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(16),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Row(
-              children: [
-                Icon(Icons.history, size: 16, color: Colors.blue.shade700),
-                const SizedBox(width: 8),
-                Text(
-                  'Recent Searches',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue.shade900,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                if (_searchHistory.isNotEmpty)
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _searchHistory.clear();
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      'Clear All',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.red.shade600,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          _searchHistory.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      'No recent searches',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount:
-                      _searchHistory.length > 5 ? 5 : _searchHistory.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      dense: true,
-                      horizontalTitleGap: 0,
-                      leading: Icon(
-                        Icons.search,
-                        size: 18,
-                        color: Colors.grey.shade600,
-                      ),
-                      title: Text(
-                        _searchHistory[index],
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.north_west,
-                          size: 16,
-                          color: Colors.blue.shade700,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _searchController.text = _searchHistory[index];
-                            _searchQuery = _searchHistory[index];
-                            _isSearching = true;
-                            _searchFocusNode.unfocus();
-                          });
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _searchController.text = _searchHistory[index];
-                          _searchQuery = _searchHistory[index];
-                          _isSearching = true;
-                        });
-                      },
-                    );
-                  },
-                ),
-        ],
-      ),
-    );
-  }
 
-  // Create a more visually appealing search history panel
-  Widget _buildSearchHistoryPanel() {
-    return Material(
-      elevation: 4,
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ),
-      child: Container(
-        width: double.infinity,
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.4,
-        ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(16),
-            bottomRight: Radius.circular(16),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header with Clear All button
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 12, 8),
-              child: Row(
-                children: [
-                  Icon(Icons.history, size: 18, color: Colors.blue.shade700),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Recent Searches',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade900,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (_searchHistory.isNotEmpty)
-                    TextButton.icon(
-                      icon: Icon(Icons.delete_outline,
-                          size: 16, color: Colors.red.shade600),
-                      label: Text(
-                        'Clear All',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.red.shade600,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _searchHistory.clear();
-                        });
-                      },
-                    ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
 
-            // Search history list or empty state
-            _searchHistory.isEmpty
-                ? Container(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 36,
-                            color: Colors.grey.shade400,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'No recent searches',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : Flexible(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: _searchHistory.length,
-                      itemBuilder: (context, index) {
-                        final searchTerm = _searchHistory[index];
-                        return ListTile(
-                          dense: true,
-                          leading: Icon(
-                            Icons.search,
-                            size: 18,
-                            color: Colors.grey.shade700,
-                          ),
-                          title: Text(
-                            searchTerm,
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.north_west,
-                            size: 16,
-                            color: Colors.blue.shade700,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              _searchController.text = searchTerm;
-                              _searchQuery = searchTerm;
-                              _isSearchFocused = false;
-                              _showSearchHistory = false;
-                              _searchFocusNode.unfocus();
-                            });
-                          },
-                          hoverColor: Colors.blue.shade50,
-                        );
-                      },
-                    ),
-                  ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Custom widget to show recent searches in a horizontal banner with animation
   Widget _buildRecentSearchesBanner() {
     if (_searchHistory.isEmpty) {
-      return Container(); // Return empty container if no search history
+      return Container();
     }
-    
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
@@ -2574,7 +1987,6 @@ class _HomeScreenState extends State<HomeScreen>
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            // Search history chips
             for (int i = 0; i < _searchHistory.length; i++)
               TweenAnimationBuilder<double>(
                 duration: Duration(milliseconds: 200 + (i * 50)),
@@ -2583,7 +1995,8 @@ class _HomeScreenState extends State<HomeScreen>
                   return Opacity(
                     opacity: value,
                     child: Transform(
-                      transform: Matrix4.translationValues(20 * (1 - value), 0, 0),
+                      transform:
+                          Matrix4.translationValues(20 * (1 - value), 0, 0),
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ActionChip(
@@ -2602,7 +2015,8 @@ class _HomeScreenState extends State<HomeScreen>
                               width: 0.5,
                             ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 0),
                           visualDensity: VisualDensity.compact,
                           onPressed: () {
                             setState(() {
@@ -2617,8 +2031,6 @@ class _HomeScreenState extends State<HomeScreen>
                   );
                 },
               ),
-              
-            // Clear all button at the end with dustbin icon and "Clear recent" text
             TweenAnimationBuilder<double>(
               duration: const Duration(milliseconds: 600),
               tween: Tween<double>(begin: 0.0, end: 1.0),
@@ -2626,10 +2038,11 @@ class _HomeScreenState extends State<HomeScreen>
                 return Opacity(
                   opacity: value,
                   child: Transform(
-                    transform: Matrix4.translationValues(20 * (1 - value), 0, 0),
+                    transform:
+                        Matrix4.translationValues(20 * (1 - value), 0, 0),
                     child: ActionChip(
                       avatar: Icon(
-                        Icons.delete,
+                        HugeIcons.strokeRoundedDelete02,
                         size: 16,
                         color: Colors.red.shade600,
                       ),

@@ -1,12 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import '../services/user_preferences_service.dart';
-import '../screens/Examination/examination_dashboard.dart';
-import '../screens/Examination/submit_grades.dart';
-import '../screens/Examination/update_grades.dart';
-import '../screens/Examination/result.dart';
-import 'home.dart'; // Import home screen
-import 'help.dart'; // Import help screen
-import 'profile.dart'; // Import profile screen
+import 'home.dart';
+import 'profile.dart';
 
 class Sidebar extends StatefulWidget {
   final Function(int)? onItemSelected;
@@ -34,10 +32,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   bool _isAlumniNetworkExpanded = false;
   bool _showPositionOptions = false;
   String _currentPosition = 'Faculty Member';
-  
-  // Animation controllers for each module
+
   late Map<String, AnimationController> _animationControllers;
-  
+
   final List<String> _positions = [
     'Faculty Member',
     'Dean',
@@ -46,24 +43,22 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     'Admin',
   ];
 
-  // Map position to icon and color
   final Map<String, IconData> _positionIcons = {
-    'Faculty Member': Icons.school,
+    'Faculty Member': HugeIcons.strokeRoundedMortarboard02,
     'Dean': Icons.architecture,
-    'HOD': Icons.account_balance,
+    'HOD': HugeIcons.strokeRoundedBank,
     'Student': Icons.person_outline,
-    'Admin': Icons.admin_panel_settings,
+    'Admin': HugeIcons.strokeRoundedShieldUser,
   };
 
   final Map<String, Color> _positionColors = {
     'Faculty Member': Colors.blue,
     'Dean': Colors.purple,
     'HOD': Colors.teal,
-    'Student': const Color(0xFF0D47A1), // Dark blue color
+    'Student': const Color(0xFF0D47A1),
     'Admin': Colors.deepPurple,
   };
 
-  // Updated map for user images - using only local assets
   final Map<String, String> _userImages = {
     'Faculty Member': 'assets/profile.jpg',
     'Dean': 'assets/profile.jpg',
@@ -76,8 +71,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _loadSavedPosition();
-    
-    // Initialize animation controllers for each module
+
     _animationControllers = {
       'examination': AnimationController(
         vsync: this,
@@ -140,7 +134,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // Dispose all animation controllers
     for (var controller in _animationControllers.values) {
       controller.dispose();
     }
@@ -154,20 +147,17 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
         _currentPosition = savedPosition;
       });
     } catch (e) {
-      // Handle any errors during loading (fallback to default position)
       print('Error loading position: $e');
     }
   }
 
   Future<void> _savePosition(String position) async {
     try {
-      // Update local state
       setState(() {
         _currentPosition = position;
         _showPositionOptions = false;
       });
 
-      // Save to preferences for persistence across app
       await UserPreferencesService.savePosition(position);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,17 +180,15 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // Calculating screen width to set drawer width proportionally
     final screenWidth = MediaQuery.of(context).size.width;
-    // Making the drawer width 85% of screen width for a more noticeable increase
+
     final drawerWidth = screenWidth * 0.85;
-    
+
     return SizedBox(
       width: drawerWidth,
       child: Drawer(
         child: Column(
           children: [
-            // Profile header section with improved UI
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
               decoration: BoxDecoration(
@@ -225,7 +213,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Updated profile image with better fallback handling
                     Container(
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -259,20 +246,19 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                       'assets/profile.jpg',
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    // Fallback to icon if image loading fails
                                     return CircleAvatar(
                                       backgroundColor: Colors.grey.shade200,
                                       child: Icon(
                                         _positionIcons[_currentPosition] ??
                                             Icons.person,
                                         size: 40,
-                                        color: _positionColors[_currentPosition],
+                                        color:
+                                            _positionColors[_currentPosition],
                                       ),
                                     );
                                   },
                                 );
                               } catch (e) {
-                                // Extra safety in case of any other errors
                                 return CircleAvatar(
                                   backgroundColor: Colors.grey.shade200,
                                   child: Icon(
@@ -289,14 +275,12 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-
-                    // Name and position on the right
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Maitrek Patel',
+                            'Chaitanya Thumbeti',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -311,8 +295,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                             ),
                           ),
                           const SizedBox(height: 6),
-
-                          // Position with toggle - enhanced design
                           GestureDetector(
                             onTap: () {
                               setState(() {
@@ -356,8 +338,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     ),
                                     child: Icon(
                                       _showPositionOptions
-                                          ? Icons.keyboard_arrow_up
-                                          : Icons.keyboard_arrow_down,
+                                          ? HugeIcons.strokeRoundedArrowUp01
+                                          : HugeIcons.strokeRoundedArrowDown01,
                                       color: Colors.white,
                                       size: 16,
                                     ),
@@ -373,8 +355,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                 ),
               ),
             ),
-
-            // Add position options if expanded with enhanced design
             AnimatedCrossFade(
               duration: const Duration(milliseconds: 300),
               crossFadeState: _showPositionOptions
@@ -382,14 +362,15 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   : CrossFadeState.showSecond,
               firstChild: Container(
                 color: _positionColors[_currentPosition]!.withOpacity(0.05),
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Icon(
-                          Icons.swap_horiz,
+                          HugeIcons.strokeRoundedArrowReloadHorizontal,
                           size: 14,
                           color: _positionColors[_currentPosition],
                         ),
@@ -488,7 +469,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
-                                    Icons.check,
+                                    HugeIcons.strokeRoundedCheckmarkSquare03,
                                     size: 12,
                                     color: _positionColors[position],
                                   ),
@@ -503,18 +484,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
               ),
               secondChild: const SizedBox(height: 0),
             ),
-
-            // Divider between header and modules
             const Divider(height: 1),
-
-            // Scrollable modules section
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  // Examination Module
                   _buildModuleWithToggle(
-                    icon: Icons.school,
+                    icon: HugeIcons.strokeRoundedMortarboard02,
                     title: 'Examination',
                     isExpanded: _isExaminationExpanded,
                     onToggle: () {
@@ -522,21 +498,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         _isExaminationExpanded = !_isExaminationExpanded;
                       });
                     },
-                    onTap: () {
-                      // Navigate to Examination Dashboard when clicking on the module directly
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ExaminationDashboard(),
-                        ),
-                      );
-                    },
                   ),
                   _buildAnimatedSubsections([
                     if (_isExaminationExpanded) ...[
                       _buildSubNavItem(context,
-                          icon: Icons.campaign, title: 'Announcement', index: 2),
+                          icon: Icons.campaign,
+                          title: 'Announcement',
+                          index: 2),
                       _buildSubNavItem(context,
                           icon: Icons.grade, title: 'Submit Grades', index: 3),
                       _buildSubNavItem(context,
@@ -552,19 +520,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           title: 'Validate Grades',
                           index: 6),
                       _buildSubNavItem(context,
-                          icon: Icons.update,
-                          title: 'Update Grades',
-                          index: 7),
+                          icon: Icons.update, title: 'Update Grades', index: 7),
                       _buildSubNavItem(context,
-                          icon: Icons.assessment,
-                          title: 'Result',
-                          index: 8),
+                          icon: Icons.assessment, title: 'Result', index: 8),
                     ],
                   ]),
-
-                  // File Tracking Module
                   _buildModuleWithToggle(
-                    icon: Icons.file_copy,
+                    icon: HugeIcons.strokeRoundedFiles01,
                     title: 'File Tracking',
                     isExpanded: _isFileTrackingExpanded,
                     onToggle: () {
@@ -580,13 +542,15 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           title: 'Create File',
                           index: 13),
                       _buildSubNavItem(context,
-                          icon: Icons.find_in_page, title: 'Track File', index: 14),
+                          icon: Icons.find_in_page,
+                          title: 'Track File',
+                          index: 14),
                       _buildSubNavItem(context,
-                          icon: Icons.history, title: 'File History', index: 15),
+                          icon: Icons.history,
+                          title: 'File History',
+                          index: 15),
                     ],
                   ]),
-
-                  // Purchase Module
                   _buildModuleWithToggle(
                     icon: Icons.shopping_cart,
                     title: 'Purchase',
@@ -611,8 +575,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Manage Vendors',
                         index: 18),
                   ],
-
-                  // Programme and Curriculum Module
                   _buildModuleWithToggle(
                     icon: Icons.menu_book,
                     title: 'Programme&Curriculum',
@@ -633,8 +595,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.assignment, title: 'Syllabus', index: 21),
                   ],
-
-                  // Patent Module
                   _buildModuleWithToggle(
                     icon: Icons.brightness_7,
                     title: 'Patent',
@@ -655,10 +615,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Patent Portfolio',
                         index: 23),
                     _buildSubNavItem(context,
-                        icon: Icons.timeline, title: 'Patent Status', index: 24),
+                        icon: Icons.timeline,
+                        title: 'Patent Status',
+                        index: 24),
                   ],
-
-                  // Inventory Module
                   _buildModuleWithToggle(
                     icon: Icons.inventory_2,
                     title: 'Inventory',
@@ -673,27 +633,30 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.add_box, title: 'Add Items', index: 25),
                     _buildSubNavItem(context,
-                        icon: Icons.list_alt, title: 'View Inventory', index: 26),
+                        icon: Icons.list_alt,
+                        title: 'View Inventory',
+                        index: 26),
                     _buildSubNavItem(context,
                         icon: Icons.analytics,
                         title: 'Inventory Reports',
                         index: 27),
                   ],
-
-                  // Event Management Module
                   _buildModuleWithToggle(
                     icon: Icons.event_available,
                     title: 'Event Management',
                     isExpanded: _isEventManagementExpanded,
                     onToggle: () {
                       setState(() {
-                        _isEventManagementExpanded = !_isEventManagementExpanded;
+                        _isEventManagementExpanded =
+                            !_isEventManagementExpanded;
                       });
                     },
                   ),
                   if (_isEventManagementExpanded) ...[
                     _buildSubNavItem(context,
-                        icon: Icons.add_circle, title: 'Create Event', index: 28),
+                        icon: Icons.add_circle,
+                        title: 'Create Event',
+                        index: 28),
                     _buildSubNavItem(context,
                         icon: Icons.calendar_month,
                         title: 'Event Calendar',
@@ -701,8 +664,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.people, title: 'Participants', index: 30),
                   ],
-
-                  // Research Module
                   _buildModuleWithToggle(
                     icon: Icons.science,
                     title: 'Research',
@@ -725,8 +686,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Research Groups',
                         index: 33),
                   ],
-
-                  // Finance Module
                   _buildModuleWithToggle(
                     icon: Icons.account_balance_wallet,
                     title: 'Finance',
@@ -741,16 +700,16 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.payment, title: 'Fee Payment', index: 34),
                     _buildSubNavItem(context,
-                        icon: Icons.account_balance,
+                        icon: HugeIcons.strokeRoundedBank,
                         title: 'Scholarships',
                         index: 35),
                     _buildSubNavItem(context,
-                        icon: Icons.receipt, title: 'Expense Claims', index: 36),
+                        icon: Icons.receipt,
+                        title: 'Expense Claims',
+                        index: 36),
                   ],
-
-                  // Placement Module
                   _buildModuleWithToggle(
-                    icon: Icons.work,
+                    icon: HugeIcons.strokeRoundedWork,
                     title: 'Placement',
                     isExpanded: _isPlacementExpanded,
                     onToggle: () {
@@ -769,8 +728,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Placement Statistics',
                         index: 39),
                   ],
-
-                  // Human Resources Module (New)
                   _buildModuleWithToggle(
                     icon: Icons.people_alt,
                     title: 'Human Resources',
@@ -783,7 +740,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   ),
                   if (_isHumanResourcesExpanded) ...[
                     _buildSubNavItem(context,
-                        icon: Icons.person_add, title: 'Recruitment', index: 40),
+                        icon: Icons.person_add,
+                        title: 'Recruitment',
+                        index: 40),
                     _buildSubNavItem(context,
                         icon: Icons.event_available,
                         title: 'Leave Management',
@@ -797,8 +756,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Training Programs',
                         index: 43),
                   ],
-
-                  // Library Management Module (New)
                   _buildModuleWithToggle(
                     icon: Icons.local_library,
                     title: 'Library Management',
@@ -824,8 +781,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'New Arrivals',
                         index: 47),
                   ],
-
-                  // Hostel Management Module (New)
                   _buildModuleWithToggle(
                     icon: Icons.apartment,
                     title: 'Hostel Management',
@@ -851,8 +806,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.payments, title: 'Fee Payment', index: 51),
                   ],
-
-                  // Alumni Network Module (New)
                   _buildModuleWithToggle(
                     icon: Icons.group,
                     title: 'Alumni Network',
@@ -873,7 +826,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Alumni Events',
                         index: 53),
                     _buildSubNavItem(context,
-                        icon: Icons.forum, title: 'Discussion Forums', index: 54),
+                        icon: Icons.forum,
+                        title: 'Discussion Forums',
+                        index: 54),
                     _buildSubNavItem(context,
                         icon: Icons.volunteer_activism,
                         title: 'Mentorship Programs',
@@ -882,17 +837,12 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                 ],
               ),
             ),
-
-            // Divider between modules and fixed bottom items
             const Divider(height: 1),
-
-            // Horizontal layout for Home, Profile, Help, Settings and Logout icons
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Home icon - already works properly
                   IconButton(
                     icon: Icon(Icons.home, color: Colors.blue.shade800),
                     tooltip: 'Home',
@@ -906,51 +856,41 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                       );
                     },
                   ),
-                  // Profile icon - updated to navigate to Profile screen
                   IconButton(
                     icon: Icon(Icons.person, color: Colors.blue.shade800),
                     tooltip: 'Profile',
                     onPressed: () {
                       Navigator.pop(context);
-                      // Navigate to Profile screen
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(), // This requires importing the ProfileScreen
+                          builder: (context) => const ProfileScreen(),
                         ),
                       );
-                      // Fallback to using onItemSelected if ProfileScreen navigation fails
+
                       if (widget.onItemSelected != null) {
                         widget.onItemSelected!(6);
                       }
                     },
                   ),
-                  // Help icon
                   IconButton(
                     icon: Icon(Icons.help, color: Colors.blue.shade800),
                     tooltip: 'Help',
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HelpScreen(),
-                        ),
-                      );
                     },
                   ),
-                  // Settings icon
                   IconButton(
                     icon: Icon(Icons.settings, color: Colors.blue.shade800),
                     tooltip: 'Settings',
                     onPressed: () {
                       Navigator.pop(context);
                       if (widget.onItemSelected != null) {
-                        widget.onItemSelected!(7);
+                        widget.onItemSelected!(8);
                       }
                     },
                   ),
-                  // Logout icon
                   IconButton(
                     icon: Icon(Icons.logout, color: Colors.red.shade700),
                     tooltip: 'Log out',
@@ -987,24 +927,38 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     }
   }
 
-  // Helper method to get the animation controller for a specific module
   AnimationController _getControllerForModule(String moduleName) {
-    switch(moduleName) {
-      case 'Examination': return _animationControllers['examination']!;
-      case 'File Tracking': return _animationControllers['fileTracking']!;
-      case 'Purchase': return _animationControllers['purchase']!;
-      case 'Programme&Curriculum': return _animationControllers['programme']!;
-      case 'Patent': return _animationControllers['patent']!;
-      case 'Inventory': return _animationControllers['inventory']!;
-      case 'Event Management': return _animationControllers['eventManagement']!;
-      case 'Research': return _animationControllers['research']!;
-      case 'Finance': return _animationControllers['finance']!;
-      case 'Placement': return _animationControllers['placement']!;
-      case 'Human Resources': return _animationControllers['humanResources']!;
-      case 'Library Management': return _animationControllers['libraryManagement']!;
-      case 'Hostel Management': return _animationControllers['hostelManagement']!;
-      case 'Alumni Network': return _animationControllers['alumniNetwork']!;
-      default: return _animationControllers['examination']!;
+    switch (moduleName) {
+      case 'Examination':
+        return _animationControllers['examination']!;
+      case 'File Tracking':
+        return _animationControllers['fileTracking']!;
+      case 'Purchase':
+        return _animationControllers['purchase']!;
+      case 'Programme&Curriculum':
+        return _animationControllers['programme']!;
+      case 'Patent':
+        return _animationControllers['patent']!;
+      case 'Inventory':
+        return _animationControllers['inventory']!;
+      case 'Event Management':
+        return _animationControllers['eventManagement']!;
+      case 'Research':
+        return _animationControllers['research']!;
+      case 'Finance':
+        return _animationControllers['finance']!;
+      case 'Placement':
+        return _animationControllers['placement']!;
+      case 'Human Resources':
+        return _animationControllers['humanResources']!;
+      case 'Library Management':
+        return _animationControllers['libraryManagement']!;
+      case 'Hostel Management':
+        return _animationControllers['hostelManagement']!;
+      case 'Alumni Network':
+        return _animationControllers['alumniNetwork']!;
+      default:
+        return _animationControllers['examination']!;
     }
   }
 
@@ -1016,14 +970,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     VoidCallback? onTap,
   }) {
     final controller = _getControllerForModule(title);
-    
-    // Update animation controller based on expanded state
+
     if (isExpanded) {
       controller.forward();
     } else {
       controller.reverse();
     }
-    
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -1061,7 +1014,6 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     );
   }
 
-
   Widget _buildSubNavItem(
     BuildContext context, {
     required IconData icon,
@@ -1071,50 +1023,18 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.only(left: 52.0, right: 8.0),
-      leading: Icon(
-        icon, 
-        color: Colors.blue.shade700, 
-        size: 18
-      ),
+      leading: Icon(icon, color: Colors.blue.shade700, size: 18),
       title: Text(
         title,
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 13,
-          color: Colors.black87, // Changed from blue to black to match module name
+          color: Colors.black87,
         ),
       ),
-      onTap: () {
-        // Close the drawer
-        Navigator.pop(context);
-        // Navigate to Submit Grades screen if index matches
-        if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SubmitGradesScreen()),
-          );
-        } else if (index == 7) {
-          // Navigate to Update Grades screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UpdateGradesScreen()),
-          );
-        } else if (index == 8) {
-          // Navigate to Result screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ResultScreen()),
-          );
-        }
-        // Notify parent about selection
-        if (widget.onItemSelected != null) {
-          widget.onItemSelected!(index);
-        }
-      },
     );
   }
 
-  // Helper method to build animated subsections for a module
   Widget _buildAnimatedSubsections(List<Widget> children) {
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),

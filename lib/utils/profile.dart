@@ -1,10 +1,11 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/user_preferences_service.dart';
-import 'bottom_bar.dart'; // Import the bottom bar
+import 'bottom_bar.dart'; 
 import 'sidebar.dart';
-import 'gesture_sidebar.dart'; // Import the gesture sidebar
+import 'gesture_sidebar.dart'; 
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,18 +15,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // Add scaffold key
-  // User information (this would typically come from a state management solution or API)
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); 
+  
   final Map<String, dynamic> _userData = {
-    'name': 'Maitrek Patel',
-    'email': 'maitrek.patel@example.com',
+    'name': 'Chaitanya Thumbeti',
+    'email': 'chaitanya@example.com',
     'phone': '+91 9876543210',
     'position':
-        'Faculty Member', // Default value, will be updated from preferences
+        'Faculty Member', 
     'department': 'Computer Science',
     'employeeId': 'FAC-2023-001',
-    'dateJoined': 'August 15, 2018',
-    'address': '123 University Campus, Academic Block B, Gujarat, India',
+    'dateJoined': 'August 15, 2020',
+    'address': 'Hyderabad, India',
     'skills': [
       'Flutter Development',
       'Machine Learning',
@@ -35,17 +36,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'education': [
       {
         'degree': 'Ph.D in Computer Science',
-        'institution': 'Gujarat Technological University',
+        'institution': 'BITS',
         'year': '2016'
       },
       {
         'degree': 'M.Tech in Information Technology',
-        'institution': 'DAIICT',
+        'institution': 'IIIT Hyd',
         'year': '2012'
       },
       {
         'degree': 'B.Tech in Computer Engineering',
-        'institution': 'Gujarat University',
+        'institution': 'Amrita University',
         'year': '2010'
       }
     ],
@@ -67,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Faculty Member': Colors.blue,
     'Dean': Colors.purple,
     'HOD': Colors.teal,
-    'Student': const Color(0xFF0D47A1), // Dark blue color
+    'Student': const Color(0xFF0D47A1), 
     'Admin': Colors.deepPurple,
   };
 
@@ -79,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Admin': Icons.admin_panel_settings,
   };
 
-  // Position options dropdown
+  
   bool _showPositionOptions = false;
   final List<String> _positions = [
     'Faculty Member',
@@ -89,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'Admin',
   ];
 
-  bool _isEditMode = false;
+  final bool _isEditMode = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -98,13 +99,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _employeeIdController = TextEditingController();
   final TextEditingController _dateJoinedController = TextEditingController();
 
-  // For adding new skills
+  
   final TextEditingController _newSkillController = TextEditingController();
 
-  // For editing education entries
+  
   List<Map<String, TextEditingController>> _educationControllers = [];
 
-  // For editing publication entries
+  
   List<Map<String, TextEditingController>> _publicationControllers = [];
 
   String? _profileImagePath;
@@ -118,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUserPosition() async {
-    // Load the saved position from preferences
+    
     final savedPosition = await UserPreferencesService.getPosition();
     setState(() {
       _userData['position'] = savedPosition;
@@ -126,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _initializeControllers() {
-    // Basic info controllers
+    
     _nameController.text = _userData['name'];
     _emailController.text = _userData['email'];
     _phoneController.text = _userData['phone'];
@@ -135,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _employeeIdController.text = _userData['employeeId'];
     _dateJoinedController.text = _userData['dateJoined'];
 
-    // Initialize education controllers
+    
     _educationControllers = List.generate(
       _userData['education'].length,
       (index) => {
@@ -148,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
 
-    // Initialize publication controllers
+    
     _publicationControllers = List.generate(
       _userData['publications'].length,
       (index) => {
@@ -164,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    // Dispose basic info controllers
+    
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
@@ -174,14 +175,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _dateJoinedController.dispose();
     _newSkillController.dispose();
 
-    // Dispose education controllers
+    
     for (var controllers in _educationControllers) {
       controllers.forEach((key, controller) {
         controller.dispose();
       });
     }
 
-    // Dispose publication controllers
+    
     for (var controllers in _publicationControllers) {
       controllers.forEach((key, controller) {
         controller.dispose();
@@ -209,53 +210,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _toggleEditMode() {
-    setState(() {
-      if (_isEditMode) {
-        // Save the changes
-        _saveChanges();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-      _isEditMode = !_isEditMode;
-    });
-  }
-
-  void _saveChanges() {
-    // Save basic info
-    _userData['name'] = _nameController.text;
-    _userData['email'] = _emailController.text;
-    _userData['phone'] = _phoneController.text;
-    _userData['address'] = _addressController.text;
-    _userData['department'] = _departmentController.text;
-    _userData['employeeId'] = _employeeIdController.text;
-    _userData['dateJoined'] = _dateJoinedController.text;
-
-    // Save education info
-    for (int i = 0; i < _educationControllers.length; i++) {
-      _userData['education'][i]['degree'] =
-          _educationControllers[i]['degree']!.text;
-      _userData['education'][i]['institution'] =
-          _educationControllers[i]['institution']!.text;
-      _userData['education'][i]['year'] =
-          _educationControllers[i]['year']!.text;
-    }
-
-    // Save publication info
-    for (int i = 0; i < _publicationControllers.length; i++) {
-      _userData['publications'][i]['title'] =
-          _publicationControllers[i]['title']!.text;
-      _userData['publications'][i]['journal'] =
-          _publicationControllers[i]['journal']!.text;
-      _userData['publications'][i]['year'] =
-          _publicationControllers[i]['year']!.text;
-    }
-  }
 
   void _addSkill() {
     if (_newSkillController.text.trim().isNotEmpty) {
@@ -292,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _userData['education'].removeAt(index);
 
-      // Dispose controllers before removing them
+      
       _educationControllers[index].forEach((key, controller) {
         controller.dispose();
       });
@@ -320,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _userData['publications'].removeAt(index);
 
-      // Dispose controllers before removing them
+      
       _publicationControllers[index].forEach((key, controller) {
         controller.dispose();
       });
@@ -351,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _showPositionOptions = false;
     });
 
-    // Save the position to preferences for persistence across app
+    
     await UserPreferencesService.savePosition(position);
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -370,9 +324,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return GestureSidebar(
       scaffoldKey: _scaffoldKey,
-      edgeWidthFactor: 1.0, // Allow swipe from anywhere on screen
+      edgeWidthFactor: 1.0, 
       child: Scaffold(
-        key: _scaffoldKey, // Use the scaffold key
+        key: _scaffoldKey, 
         appBar: AppBar(
           title: const Text(
             'Profile',
@@ -380,14 +334,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           elevation: 0,
           backgroundColor: primaryColor,
-          iconTheme: const IconThemeData(color: Colors.white), // Set menu icon to white
+          iconTheme: const IconThemeData(color: Colors.white), 
         ),
-        drawer: const Sidebar(), // Add Sidebar as a drawer
+        drawer: const Sidebar(), 
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile header with gradient
+              
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -400,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    // Profile image
+                    
                     GestureDetector(
                       onTap: _isEditMode ? _pickImage : null,
                       child: Stack(
@@ -472,7 +426,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Name field
+                    
                     _isEditMode
                         ? Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -508,7 +462,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                     const SizedBox(height: 10),
-                    // Position badge with dropdown option
+                    
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -555,7 +509,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Position options dropdown
+                    
                     AnimatedCrossFade(
                       duration: const Duration(milliseconds: 300),
                       crossFadeState: _showPositionOptions
@@ -680,7 +634,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              // Contact Info Section
+              
               _buildSectionHeader(
                 primaryColor,
                 'Contact Information',
@@ -689,7 +643,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               _buildContactInfoCard(primaryColor),
 
-              // Professional Details Section
+              
               _buildSectionHeader(
                 primaryColor,
                 'Professional Details',
@@ -698,7 +652,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               _buildProfessionalCard(primaryColor),
 
-              // Education Section
+              
               _buildSectionHeader(
                 primaryColor,
                 'Education',
@@ -707,7 +661,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               ..._buildEducationCards(primaryColor),
 
-              // Publications Section
+              
               _buildSectionHeader(
                 primaryColor,
                 'Publications',
@@ -716,7 +670,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               ..._buildPublicationCards(primaryColor),
 
-              // Skills Section
+              
               _buildSectionHeader(
                 primaryColor,
                 'Skills',
@@ -729,7 +683,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-        // Add bottom bar with correct index
+        
         bottomNavigationBar: const BottomBar(currentIndex: 3),
       ),
     );
@@ -785,7 +739,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
-              // Email field
+              
               _buildContactField(
                 icon: Icons.email,
                 title: 'Email',
@@ -796,7 +750,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 15),
               const Divider(),
               const SizedBox(height: 15),
-              // Phone field
+              
               _buildContactField(
                 icon: Icons.phone,
                 title: 'Phone',
@@ -807,7 +761,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 15),
               const Divider(),
               const SizedBox(height: 15),
-              // Address field
+              
               _buildContactField(
                 icon: Icons.location_on,
                 title: 'Address',
