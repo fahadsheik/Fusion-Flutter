@@ -6,6 +6,8 @@ import '../screens/Examination/examination_dashboard.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../screens/iwd/iwd_dashboard.dart'; // adjust path as necessary
+
 
 class ModulesScreen extends StatefulWidget {
   const ModulesScreen({Key? key}) : super(key: key);
@@ -22,6 +24,7 @@ class _ModulesScreenState extends State<ModulesScreen> with TickerProviderStateM
   
   // App-specific modules with icons
   final List<Module> _modules = [
+    Module(id: '16', title: 'IWD', icon: Icons.business_center, size: ModuleSize.medium),
     Module(id: '1', title: 'Examination', icon: Icons.school, size: ModuleSize.large),
     Module(id: '2', title: 'Patent', icon: Icons.brightness_7, size: ModuleSize.small),
     Module(id: '3', title: 'Placement', icon: Icons.work, size: ModuleSize.medium),
@@ -37,6 +40,7 @@ class _ModulesScreenState extends State<ModulesScreen> with TickerProviderStateM
     Module(id: '13', title: 'Human Resources', icon: Icons.people_alt, size: ModuleSize.medium),
     Module(id: '14', title: 'Alumni Network', icon: Icons.group, size: ModuleSize.small),
     Module(id: '15', title: 'Research', icon: Icons.science, size: ModuleSize.medium),
+    
   ];
   
   // Recently used modules - will be populated from SharedPreferences
@@ -612,7 +616,13 @@ class _ModernModuleCardState extends State<ModernModuleCard> with SingleTickerPr
                               builder: (context) => const ExaminationDashboard(),
                             ),
                           );
-                        } else {
+                        }else if (widget.module.id == '16') {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const IwdDashboardScreen()),
+  );
+}
+else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Opening ${widget.module.title} module'),
