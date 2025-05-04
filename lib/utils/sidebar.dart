@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+import '../screens/Mess Management/deregistration_screen.dart';
+import '../screens/Mess Management/feedback_screen.dart';
+import '../screens/Mess Management/mess_activities_screen.dart';
+import '../screens/Mess Management/mess_announcement_screen.dart';
+import '../screens/Mess Management/rebate_request_screen.dart';
+import '../screens/Mess Management/registration_screen.dart';
+import '../screens/Mess Management/requests_screen.dart';
+import '../screens/Mess Management/respond_to_rebate_screen.dart';
+import '../screens/Mess Management/update_payment_screen.dart';
+import '../screens/Mess Management/update_semester_dates_screen.dart';
+import '../screens/Mess Management/view_bill_and_payments_screen.dart';
+import '../screens/Mess Management/view_menu_screen.dart';
+import '../screens/Mess Management/view_registrations_screen.dart';
 import '../services/user_preferences_service.dart';
 import '../screens/Examination/examination_dashboard.dart';
 import '../screens/Examination/submit_grades.dart';
@@ -32,6 +45,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   bool _isLibraryManagementExpanded = false;
   bool _isHostelManagementExpanded = false;
   bool _isAlumniNetworkExpanded = false;
+  bool _isMessManagementExpanded = false;
   bool _showPositionOptions = false;
   String _currentPosition = 'Faculty Member';
   
@@ -132,6 +146,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 300),
       ),
       'alumniNetwork': AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+      ),
+      'messManagement': AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 300),
       ),
@@ -879,6 +897,70 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Mentorship Programs',
                         index: 55),
                   ],
+                  _buildModuleWithToggle(
+                    icon: Icons.food_bank_rounded,
+                    title: 'Mess Management',
+                    isExpanded: _isMessManagementExpanded,
+                    onToggle: () {
+                      setState(() {
+                        _isMessManagementExpanded = !_isMessManagementExpanded;
+                      });
+                    },
+                  ),
+                  if (_isMessManagementExpanded) ...[
+                    _buildSubNavItem(context,
+                        icon: Icons.restaurant_menu,
+                        title: 'View Menu',
+                        index: 56),
+                    _buildSubNavItem(context,
+                        icon: Icons.app_registration,
+                        title: 'Registration',
+                        index: 57),
+                    _buildSubNavItem(context,
+                        icon: Icons.feedback_outlined,
+                        title: 'Feedback',
+                        index: 58),
+                    _buildSubNavItem(context,
+                        icon: Icons.developer_board_off,
+                        title: 'Deregistration',
+                        index: 59),
+                    _buildSubNavItem(context,
+                        icon: Icons.payment,
+                        title: 'Update Payment',
+                        index: 60),
+                    _buildSubNavItem(context,
+                        icon: Icons.money_off,
+                        title: 'Rebate Request',
+                        index: 61),
+                    _buildSubNavItem(context,
+                        icon: Icons.payment,
+                        title: 'View Bill and Payments',
+                        index: 62),
+                    _buildSubNavItem(context,
+                        icon: Icons.local_activity,
+                        title: 'Mess Activities',
+                        index: 63),
+                    _buildSubNavItem(context,
+                        icon: Icons.calendar_month,
+                        title: 'Update Semester Dates',
+                        index: 64),
+                    _buildSubNavItem(context,
+                        icon: Icons.how_to_reg_rounded,
+                        title: 'View Registrations',
+                        index: 65),
+                    _buildSubNavItem(context,
+                        icon: Icons.request_page,
+                        title: 'Requests',
+                        index: 66),
+                    _buildSubNavItem(context,
+                        icon: Icons.campaign,
+                        title: 'Announcement',
+                        index: 67),
+                    _buildSubNavItem(context,
+                        icon: Icons.money,
+                        title: 'Respond to Rebate',
+                        index: 68),
+                  ],
                 ],
               ),
             ),
@@ -1004,6 +1086,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
       case 'Library Management': return _animationControllers['libraryManagement']!;
       case 'Hostel Management': return _animationControllers['hostelManagement']!;
       case 'Alumni Network': return _animationControllers['alumniNetwork']!;
+      case 'Mess Management': return _animationControllers['messManagement']!;
       default: return _animationControllers['examination']!;
     }
   }
@@ -1104,6 +1187,117 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ResultScreen()),
+          );
+        }
+        else if (index == 56) {
+          // Navigate to View Menu screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ViewMenuScreen()),
+          );
+        } else if (index == 57) {
+          // Navigate to Mess Registration screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+          );
+        } else if (index == 58) {
+          // Navigate to Mess Feedback screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+          );
+        } else if (index == 59) {
+          // Navigate to Mess Deregistration screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const DeregistrationScreen()),
+          );
+        }
+        else if (index == 60) {
+          // Navigate to Update Payment screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const UpdatePaymentScreen()),
+          );
+        }
+        else if (index == 61) {
+          // Navigate to Rebate Request screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RebateRequestScreen()),
+          );
+        }
+        else if (index == 62) {
+          // Navigate to View Bill and Payments screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ViewBillAndPaymentsScreen()),
+          );
+        }
+        else if (index == 63) {
+          // Navigate to Mess Activities screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const MessActivitiesScreen()),
+          );
+        }
+        else if (index == 64) {
+          // Navigate to Update Semester Dates screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const UpdateSemesterDatesScreen()),
+          );
+        }
+        else if (index == 65) {
+          // Navigate to View Registrations screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ViewRegistrationsScreen()),
+          );
+        }
+        else if (index == 66) {
+          // Navigate to Requests screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RequestsScreen()),
+          );
+        }
+        else if (index == 67) {
+          // Navigate to Requests screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const MessAnnouncementScreen()),
+          );
+        }
+        else if (index == 68) {
+          // Navigate to Respond to Rebate screen
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RespondToRebateScreen()),
           );
         }
         // Notify parent about selection
