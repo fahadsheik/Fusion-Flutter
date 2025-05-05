@@ -5,6 +5,12 @@ import '../screens/inventory management/inventory_dashboard.dart';
 import '../screens/Examination/submit_grades.dart';
 import '../screens/Examination/update_grades.dart';
 import '../screens/Examination/result.dart';
+import '../screens/Programme_Curriculum/programme_curriculum_dashboard.dart';
+import '../screens/Programme_Curriculum/programme_screen.dart';
+import '../screens/Programme_Curriculum/curriculum_screen.dart';
+import '../screens/Programme_Curriculum/courses_screen.dart';
+import '../screens/Programme_Curriculum/batches_screen.dart' as batches_screen;
+import '../screens/Programme_Curriculum/discipline_screen.dart';
 import 'home.dart'; // Import home screen
 import 'help.dart'; // Import help screen
 import 'profile.dart'; // Import profile screen
@@ -35,10 +41,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   bool _isAlumniNetworkExpanded = false;
   bool _showPositionOptions = false;
   String _currentPosition = 'Faculty Member';
-  
+
   // Animation controllers for each module
   late Map<String, AnimationController> _animationControllers;
-  
+
   final List<String> _positions = [
     'Faculty Member',
     'Dean',
@@ -77,7 +83,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _loadSavedPosition();
-    
+
     // Initialize animation controllers for each module
     _animationControllers = {
       'examination': AnimationController(
@@ -195,7 +201,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     final screenWidth = MediaQuery.of(context).size.width;
     // Making the drawer width 85% of screen width for a more noticeable increase
     final drawerWidth = screenWidth * 0.85;
-    
+
     return SizedBox(
       width: drawerWidth,
       child: Drawer(
@@ -267,7 +273,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                                         _positionIcons[_currentPosition] ??
                                             Icons.person,
                                         size: 40,
-                                        color: _positionColors[_currentPosition],
+                                        color:
+                                            _positionColors[_currentPosition],
                                       ),
                                     );
                                   },
@@ -383,7 +390,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   : CrossFadeState.showSecond,
               firstChild: Container(
                 color: _positionColors[_currentPosition]!.withOpacity(0.05),
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -537,7 +545,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   _buildAnimatedSubsections([
                     if (_isExaminationExpanded) ...[
                       _buildSubNavItem(context,
-                          icon: Icons.campaign, title: 'Announcement', index: 2),
+                          icon: Icons.campaign,
+                          title: 'Announcement',
+                          index: 2),
                       _buildSubNavItem(context,
                           icon: Icons.grade, title: 'Submit Grades', index: 3),
                       _buildSubNavItem(context,
@@ -553,13 +563,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           title: 'Validate Grades',
                           index: 6),
                       _buildSubNavItem(context,
-                          icon: Icons.update,
-                          title: 'Update Grades',
-                          index: 7),
+                          icon: Icons.update, title: 'Update Grades', index: 7),
                       _buildSubNavItem(context,
-                          icon: Icons.assessment,
-                          title: 'Result',
-                          index: 8),
+                          icon: Icons.assessment, title: 'Result', index: 8),
                     ],
                   ]),
 
@@ -581,9 +587,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                           title: 'Create File',
                           index: 13),
                       _buildSubNavItem(context,
-                          icon: Icons.find_in_page, title: 'Track File', index: 14),
+                          icon: Icons.find_in_page,
+                          title: 'Track File',
+                          index: 14),
                       _buildSubNavItem(context,
-                          icon: Icons.history, title: 'File History', index: 15),
+                          icon: Icons.history,
+                          title: 'File History',
+                          index: 15),
                     ],
                   ]),
 
@@ -616,23 +626,77 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   // Programme and Curriculum Module
                   _buildModuleWithToggle(
                     icon: Icons.menu_book,
-                    title: 'Programme&Curriculum',
+                    title: 'Programme & Curriculum',
                     isExpanded: _isProgrammeExpanded,
                     onToggle: () {
                       setState(() {
                         _isProgrammeExpanded = !_isProgrammeExpanded;
                       });
                     },
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const ProgrammeCurriculumDashboard(),
+                        ),
+                      );
+                    },
                   ),
                   if (_isProgrammeExpanded) ...[
                     _buildSubNavItem(context,
-                        icon: Icons.auto_stories,
-                        title: 'Course Management',
-                        index: 19),
+                        icon: Icons.school, title: 'Programme', onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProgrammeScreen(),
+                        ),
+                      );
+                    }),
                     _buildSubNavItem(context,
-                        icon: Icons.class_, title: 'Timetable', index: 20),
+                        icon: Icons.menu_book, title: 'Curriculum', onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CurriculumScreen(),
+                        ),
+                      );
+                    }),
                     _buildSubNavItem(context,
-                        icon: Icons.assignment, title: 'Syllabus', index: 21),
+                        icon: Icons.book, title: 'Courses', onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CoursesScreen(),
+                        ),
+                      );
+                    }),
+                    _buildSubNavItem(context,
+                        icon: Icons.people, title: 'Batches', onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const batches_screen.BatchesScreen(),
+                        ),
+                      );
+                    }),
+                    _buildSubNavItem(context,
+                        icon: Icons.account_tree,
+                        title: 'Discipline', onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DisciplineScreen(),
+                        ),
+                      );
+                    }),
                   ],
 
                   // Patent Module
@@ -656,7 +720,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Patent Portfolio',
                         index: 23),
                     _buildSubNavItem(context,
-                        icon: Icons.timeline, title: 'Patent Status', index: 24),
+                        icon: Icons.timeline,
+                        title: 'Patent Status',
+                        index: 24),
                   ],
 
                   // Inventory Module
@@ -684,7 +750,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     _buildSubNavItem(context,
                         icon: Icons.add_box, title: 'Add Items', index: 25),
                     _buildSubNavItem(context,
-                        icon: Icons.list_alt, title: 'View Inventory', index: 26),
+                        icon: Icons.list_alt,
+                        title: 'View Inventory',
+                        index: 26),
                     _buildSubNavItem(context,
                         icon: Icons.analytics,
                         title: 'Inventory Reports',
@@ -698,13 +766,16 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                     isExpanded: _isEventManagementExpanded,
                     onToggle: () {
                       setState(() {
-                        _isEventManagementExpanded = !_isEventManagementExpanded;
+                        _isEventManagementExpanded =
+                            !_isEventManagementExpanded;
                       });
                     },
                   ),
                   if (_isEventManagementExpanded) ...[
                     _buildSubNavItem(context,
-                        icon: Icons.add_circle, title: 'Create Event', index: 28),
+                        icon: Icons.add_circle,
+                        title: 'Create Event',
+                        index: 28),
                     _buildSubNavItem(context,
                         icon: Icons.calendar_month,
                         title: 'Event Calendar',
@@ -756,7 +827,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Scholarships',
                         index: 35),
                     _buildSubNavItem(context,
-                        icon: Icons.receipt, title: 'Expense Claims', index: 36),
+                        icon: Icons.receipt,
+                        title: 'Expense Claims',
+                        index: 36),
                   ],
 
                   // Placement Module
@@ -794,7 +867,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                   ),
                   if (_isHumanResourcesExpanded) ...[
                     _buildSubNavItem(context,
-                        icon: Icons.person_add, title: 'Recruitment', index: 40),
+                        icon: Icons.person_add,
+                        title: 'Recruitment',
+                        index: 40),
                     _buildSubNavItem(context,
                         icon: Icons.event_available,
                         title: 'Leave Management',
@@ -884,7 +959,9 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                         title: 'Alumni Events',
                         index: 53),
                     _buildSubNavItem(context,
-                        icon: Icons.forum, title: 'Discussion Forums', index: 54),
+                        icon: Icons.forum,
+                        title: 'Discussion Forums',
+                        index: 54),
                     _buildSubNavItem(context,
                         icon: Icons.volunteer_activism,
                         title: 'Mentorship Programs',
@@ -927,7 +1004,8 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(), // This requires importing the ProfileScreen
+                          builder: (context) =>
+                              const ProfileScreen(), // This requires importing the ProfileScreen
                         ),
                       );
                       // Fallback to using onItemSelected if ProfileScreen navigation fails
@@ -1000,22 +1078,37 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
 
   // Helper method to get the animation controller for a specific module
   AnimationController _getControllerForModule(String moduleName) {
-    switch(moduleName) {
-      case 'Examination': return _animationControllers['examination']!;
-      case 'File Tracking': return _animationControllers['fileTracking']!;
-      case 'Purchase': return _animationControllers['purchase']!;
-      case 'Programme&Curriculum': return _animationControllers['programme']!;
-      case 'Patent': return _animationControllers['patent']!;
-      case 'Inventory': return _animationControllers['inventory']!;
-      case 'Event Management': return _animationControllers['eventManagement']!;
-      case 'Research': return _animationControllers['research']!;
-      case 'Finance': return _animationControllers['finance']!;
-      case 'Placement': return _animationControllers['placement']!;
-      case 'Human Resources': return _animationControllers['humanResources']!;
-      case 'Library Management': return _animationControllers['libraryManagement']!;
-      case 'Hostel Management': return _animationControllers['hostelManagement']!;
-      case 'Alumni Network': return _animationControllers['alumniNetwork']!;
-      default: return _animationControllers['examination']!;
+    switch (moduleName) {
+      case 'Examination':
+        return _animationControllers['examination']!;
+      case 'File Tracking':
+        return _animationControllers['fileTracking']!;
+      case 'Purchase':
+        return _animationControllers['purchase']!;
+      case 'Programme&Curriculum':
+        return _animationControllers['programme']!;
+      case 'Patent':
+        return _animationControllers['patent']!;
+      case 'Inventory':
+        return _animationControllers['inventory']!;
+      case 'Event Management':
+        return _animationControllers['eventManagement']!;
+      case 'Research':
+        return _animationControllers['research']!;
+      case 'Finance':
+        return _animationControllers['finance']!;
+      case 'Placement':
+        return _animationControllers['placement']!;
+      case 'Human Resources':
+        return _animationControllers['humanResources']!;
+      case 'Library Management':
+        return _animationControllers['libraryManagement']!;
+      case 'Hostel Management':
+        return _animationControllers['hostelManagement']!;
+      case 'Alumni Network':
+        return _animationControllers['alumniNetwork']!;
+      default:
+        return _animationControllers['examination']!;
     }
   }
 
@@ -1027,14 +1120,14 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     VoidCallback? onTap,
   }) {
     final controller = _getControllerForModule(title);
-    
+
     // Update animation controller based on expanded state
     if (isExpanded) {
       controller.forward();
     } else {
       controller.reverse();
     }
-    
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -1072,54 +1165,57 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     );
   }
 
-
   Widget _buildSubNavItem(
     BuildContext context, {
     required IconData icon,
     required String title,
-    required int index,
+    int? index,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.only(left: 52.0, right: 8.0),
-      leading: Icon(
-        icon, 
-        color: Colors.blue.shade700, 
-        size: 18
-      ),
+      leading: Icon(icon, color: Colors.blue.shade700, size: 18),
       title: Text(
         title,
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 13,
-          color: Colors.black87, // Changed from blue to black to match module name
+          color:
+              Colors.black87, // Changed from blue to black to match module name
         ),
       ),
       onTap: () {
         // Close the drawer
         Navigator.pop(context);
-        // Navigate to Submit Grades screen if index matches
-        if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SubmitGradesScreen()),
-          );
-        } else if (index == 7) {
-          // Navigate to Update Grades screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UpdateGradesScreen()),
-          );
-        } else if (index == 8) {
-          // Navigate to Result screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ResultScreen()),
-          );
-        }
-        // Notify parent about selection
-        if (widget.onItemSelected != null) {
-          widget.onItemSelected!(index);
+        if (onTap != null) {
+          onTap();
+        } else if (index != null) {
+          // Navigate to Submit Grades screen if index matches
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SubmitGradesScreen()),
+            );
+          } else if (index == 7) {
+            // Navigate to Update Grades screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const UpdateGradesScreen()),
+            );
+          } else if (index == 8) {
+            // Navigate to Result screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ResultScreen()),
+            );
+          }
+          // Notify parent about selection
+          if (widget.onItemSelected != null) {
+            widget.onItemSelected!(index);
+          }
         }
       },
     );
