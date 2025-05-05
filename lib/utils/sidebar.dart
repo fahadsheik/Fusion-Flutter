@@ -4,6 +4,7 @@ import '../screens/Examination/examination_dashboard.dart';
 import '../screens/Examination/submit_grades.dart';
 import '../screens/Examination/update_grades.dart';
 import '../screens/Examination/result.dart';
+import '../screens/HealthCenter/Compounder/health_dashboard.dart';
 import 'home.dart'; // Import home screen
 import 'help.dart'; // Import help screen
 import 'profile.dart'; // Import profile screen
@@ -19,6 +20,7 @@ class Sidebar extends StatefulWidget {
 
 class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   bool _isExaminationExpanded = false;
+  bool _isHealthCenterExpanded = false;
   bool _isFileTrackingExpanded = false;
   bool _isPurchaseExpanded = false;
   bool _isProgrammeExpanded = false;
@@ -80,6 +82,10 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
     // Initialize animation controllers for each module
     _animationControllers = {
       'examination': AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+      ),
+      'healthCenter': AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 300),
       ),
@@ -533,6 +539,36 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                       );
                     },
                   ),
+
+                  // Health Center Module
+                  _buildModuleWithToggle(
+                    icon: Icons.local_hospital,
+                    title: 'Health Center',
+                    isExpanded: _isHealthCenterExpanded,
+                    onToggle: () {
+                      setState(() {
+                        _isHealthCenterExpanded = !_isHealthCenterExpanded;
+                      });
+                    },
+                    onTap: () {
+                      // Navigate to Health Dashboard when clicking on the module directly
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HealthDashboard(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildAnimatedSubsections([
+                    if (_isHealthCenterExpanded) ...[
+                      _buildSubNavItem(context,
+                          icon: Icons.dashboard,
+                          title: 'Dashboard',
+                          index: 100),
+                    ],
+                  ]),
                   _buildAnimatedSubsections([
                     if (_isExaminationExpanded) ...[
                       _buildSubNavItem(context,
@@ -991,6 +1027,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
   AnimationController _getControllerForModule(String moduleName) {
     switch(moduleName) {
       case 'Examination': return _animationControllers['examination']!;
+      case 'Health Center': return _animationControllers['healthCenter']!;
       case 'File Tracking': return _animationControllers['fileTracking']!;
       case 'Purchase': return _animationControllers['purchase']!;
       case 'Programme&Curriculum': return _animationControllers['programme']!;
@@ -1034,10 +1071,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
         ),
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.blue.shade800),
+        leading: Icon(icon, color: const Color(0xFF004D40)), // Primary Dark Teal
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF004D40), // Primary Dark Teal
+          ),
         ),
         trailing: RotationTransition(
           turns: Tween(begin: 0.0, end: 0.25).animate(
@@ -1049,7 +1089,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
           child: IconButton(
             icon: Icon(
               Icons.expand_more,
-              color: Colors.blue.shade800,
+              color: const Color(0xFF009688), // Secondary Teal
             ),
             onPressed: () {
               onToggle();
@@ -1073,7 +1113,7 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
       contentPadding: const EdgeInsets.only(left: 52.0, right: 8.0),
       leading: Icon(
         icon, 
-        color: Colors.blue.shade700, 
+        color: const Color(0xFF009688), // Secondary Teal
         size: 18
       ),
       title: Text(
@@ -1081,13 +1121,13 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 13,
-          color: Colors.black87, // Changed from blue to black to match module name
+          color: const Color(0xFF004D40), // Primary Dark Teal
         ),
       ),
       onTap: () {
         // Close the drawer
         Navigator.pop(context);
-        // Navigate to Submit Grades screen if index matches
+        // Navigate based on index
         if (index == 3) {
           Navigator.push(
             context,
@@ -1104,6 +1144,12 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ResultScreen()),
+          );
+        } else if (index == 100) {
+          // Navigate to Health Dashboard
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HealthDashboard()),
           );
         }
         // Notify parent about selection

@@ -3,6 +3,7 @@ import 'bottom_bar.dart';
 import 'sidebar.dart';
 import 'gesture_sidebar.dart';
 import '../screens/Examination/examination_dashboard.dart';
+import '../screens/HealthCenter/Compounder/health_dashboard.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -23,6 +24,7 @@ class _ModulesScreenState extends State<ModulesScreen> with TickerProviderStateM
   // App-specific modules with icons
   final List<Module> _modules = [
     Module(id: '1', title: 'Examination', icon: Icons.school, size: ModuleSize.large),
+    Module(id: '16', title: 'Health Center', icon: Icons.local_hospital, size: ModuleSize.large),
     Module(id: '2', title: 'Patent', icon: Icons.brightness_7, size: ModuleSize.small),
     Module(id: '3', title: 'Placement', icon: Icons.work, size: ModuleSize.medium),
     Module(id: '4', title: 'Library', icon: Icons.local_library, size: ModuleSize.small),
@@ -307,7 +309,15 @@ class _ModulesScreenState extends State<ModulesScreen> with TickerProviderStateM
         // Update recent modules when tapped
         _updateRecentModules(module);
         
-        if (module.id == '1') {
+        print('Recent Module ID: ${module.id}'); // Debug print
+        if (module.id == '16') { // Health Center module
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HealthDashboard(),
+            ),
+          );
+        } else if (module.id == '1') { // Examination module
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -605,7 +615,15 @@ class _ModernModuleCardState extends State<ModernModuleCard> with SingleTickerPr
                         }
                         
                         // Navigate to appropriate screens based on the module
-                        if (widget.module.id == '1') { // Examination module
+                        print('Module Grid ID: ${widget.module.id}'); // Debug print
+                        if (widget.module.id == '16') { // Health Center module
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HealthDashboard(),
+                            ),
+                          );
+                        } else if (widget.module.id == '1') { // Examination module
                           Navigator.push(
                             context,
                             MaterialPageRoute(
