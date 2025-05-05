@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/user_preferences_service.dart';
 import '../screens/Examination/examination_dashboard.dart';
+import '../screens/inventory management/inventory_dashboard.dart';
 import '../screens/Examination/submit_grades.dart';
 import '../screens/Examination/update_grades.dart';
 import '../screens/Examination/result.dart';
@@ -667,6 +668,16 @@ class _SidebarState extends State<Sidebar> with TickerProviderStateMixin {
                       setState(() {
                         _isInventoryExpanded = !_isInventoryExpanded;
                       });
+                    },
+                    onTap: () {
+                      // Navigate to Examination Dashboard when clicking on the module directly
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InventoryDashboard(),
+                        ),
+                      );
                     },
                   ),
                   if (_isInventoryExpanded) ...[

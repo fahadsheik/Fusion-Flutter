@@ -3,6 +3,7 @@ import 'bottom_bar.dart';
 import 'sidebar.dart';
 import 'gesture_sidebar.dart';
 import '../screens/Examination/examination_dashboard.dart';
+import '../screens/inventory management/inventory_dashboard.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -314,6 +315,13 @@ class _ModulesScreenState extends State<ModulesScreen> with TickerProviderStateM
               builder: (context) => const ExaminationDashboard(),
             ),
           );
+        } else if (module.id == '11') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const InventoryDashboard(),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -606,6 +614,13 @@ class _ModernModuleCardState extends State<ModernModuleCard> with SingleTickerPr
                         
                         // Navigate to appropriate screens based on the module
                         if (widget.module.id == '1') { // Examination module
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ExaminationDashboard(),
+                            ),
+                          );
+                        } else if (widget.module.id == '11') { // Examination module
                           Navigator.push(
                             context,
                             MaterialPageRoute(

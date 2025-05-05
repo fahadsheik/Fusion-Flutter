@@ -9,6 +9,7 @@ import '../screens/Examination/update_grades.dart';
 import '../screens/Examination/generate_transcript.dart';
 import '../screens/Examination/result.dart';
 import '../screens/Examination/validate_grades.dart';
+import '../screens/inventory management/inventory_dashboard.dart';
 import 'profile.dart';
 import '../screens/Examination/examination_dashboard.dart';
 import 'bottom_bar.dart'; // Import the bottom bar
@@ -191,7 +192,7 @@ class _SearchScreenState extends State<SearchScreen> with SingleTickerProviderSt
         name: 'Inventory',
         icon: Icons.inventory_2,
         color: Colors.blue.shade700,
-        route: (context) => const AnnouncementScreen(), // Placeholder
+        route: (context) => const InventoryDashboard(), // Placeholder
       ),
       // Event Management module
       ModuleItem(
